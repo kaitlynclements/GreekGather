@@ -1,0 +1,72 @@
+✅ GreekGather: Full Feature Rundown
+GreekGather is a Greek life event planning and management app. Below is a breakdown of everything your app currently supports and planned enhancements.
+
+🟢 User Authentication & Access Control
+✅ Login & Registration
+Users register with their email and password.
+After registering, users log in to access their account.
+Logged-in users see a different navbar than guests.
+
+✅ Admin Accounts & Permissions
+The first user to create a chapter becomes the admin.
+Admins approve or reject members before they join a chapter.
+Admins can assign roles (e.g., VP, Event Monitor).
+
+🟢 Chapter Management
+✅ Create a Chapter
+Users can create a new chapter, specifying:
+Organization Name (e.g., AXO)
+Chapter Name (e.g., Phi Chapter)
+✅ Join a Chapter
+Users select from a dropdown of existing chapters.
+Admins must approve new members before they officially join.
+
+🟢 Event Planning
+✅ Create & Manage Events
+Only VPs can create events.
+Events include title, date, location, and description.
+Chapters have their own exclusive event list.
+✅ Assign Event Monitors
+VPs assign event monitors from chapter members.
+A randomized selection process picks monitors.
+VPs can manually adjust assignments.
+✅ Check-in System for Events
+Event monitors check in members & guests at events.
+Attendee lists help track who attended.
+
+🟢 User Interface (UI) & Navigation
+✅ Navigation & User Experience
+Navbar changes based on login state:
+Logged Out: Home, Login, Register.
+Logged In: Home, Events, Profile.
+Welcome Page with options to Create or Join a Chapter.
+Modern UI for Login, Register, and Chapter pages.
+✅ User Profile Section
+The Navbar will display a profile section after login.
+Future enhancement: Clickable profile dropdown.
+
+🟢 Admin & Member Approval System
+✅ Admin Approval for Join Requests
+Users request to join a chapter, and admins must approve.
+Approved users become full members of the chapter.
+
+📌 Final Summary
+Users Can:
+✅ Register & Log in
+✅ Create a new chapter (if they’re the first member)
+✅ Request to join an existing chapter
+✅ Wait for admin approval to join a chapter
+✅ View & attend chapter events
+✅ Check into events (event monitors only)
+
+Admins Can:
+✅ Approve or reject join requests
+✅ Assign roles (VPs, Event Monitors, etc.)
+✅ Create & manage events for the chapter
+✅ Assign event monitors
+
+🚀 Future Enhancements (Optional)
+Event RSVP system (users can confirm attendance)?
+Chapter Announcements (admins can post updates)?
+Dashboard for Admins to view pending join requests?
+Notifications (get alerts when approved for a chapter)?

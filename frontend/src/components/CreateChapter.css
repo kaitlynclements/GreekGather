@@ -1,0 +1,31 @@
+.create-chapter-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.create-chapter-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.create-chapter-form input {
+    width: 300px;
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.create-chapter-form button {
+    padding: 10px 15px;
+    background-color: #003366;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.create-chapter-form button:hover {
+    background-color: #002244;
+}

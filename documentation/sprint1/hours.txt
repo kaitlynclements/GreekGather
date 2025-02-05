@@ -1,0 +1,27 @@
+Kaitlyn Clements: 
+    02/02: 3 Hours, Implementing initial UI and frontend along with minor backend setup. Mostly initial setup of how app is going to run just without total functionality. 
+
+    Total: 3 hours
+
+Taylor Slade: 
+    ...
+
+    Total: 0 hours
+
+Aaditi Chinawalkar:
+    ...
+
+    Total: 0 hours
+
+Sam Muehlebach: 
+    ...
+
+    Total: 0 hours
+
+Lizzie Soltis: 
+    ...
+
+    Total: 0 hours
+
+
+Total Group Hours: 3 

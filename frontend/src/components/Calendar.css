@@ -1,0 +1,45 @@
+.calendar-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.react-calendar {
+    width: 100%;
+    border: none;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.event-dot {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 5px;
+}
+
+.event-name {
+    font-size: 10px;
+    background: #003366;
+    color: white;
+    padding: 2px 4px;
+    border-radius: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.create-event-btn {
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #003366;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.create-event-btn:hover {
+    background-color: #002244;
+}
