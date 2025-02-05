@@ -32,7 +32,6 @@ function Navbar() {
                 ) : (
                     <>
                         <li><Link to="/events">Events</Link></li>
-                        <li><Link to="/calendar">Calendar</Link></li>
                         <li className="profile-section">
                             <span>👤 {username || "Profile"}</span>
                         </li>
