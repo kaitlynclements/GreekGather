@@ -52,6 +52,7 @@ cd frontend
 2. Install dependencies:
 
 npm install
+
 npm install react-calendar
 
 3. Start the frontend development server:
