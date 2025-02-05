@@ -9,7 +9,6 @@ import './components/Navbar.css';
 import CreateChapter from './components/CreateChapter';
 import JoinChapter from './components/JoinChapter';
 import AssignRole from './components/AssignRole';
-import EventCalendar from './components/Calendar';
 
 function App() {
     const [userRole, setUserRole] = useState(null);
@@ -29,7 +28,6 @@ function App() {
                 <Route path="/login" element={<Login setUserRole={setUserRole} />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/events" element={<Events />} />
-                <Route path="/calendar" element={<EventCalendar />} />
                 <Route path="/create_chapter" element={<CreateChapter />} />
                 <Route path="/join_chapter" element={<JoinChapter />} />
                 <Route path="/assign_role" element={userRole === 'admin' ? <AssignRole /> : <Navigate to="/" />} />
