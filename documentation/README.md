@@ -32,7 +32,7 @@ pip install flask-bcrypt
 
 5. Initialize the database:
 
-python3 database.py
+python database.py
 
 6. Run the Flask server:
 
