@@ -18,14 +18,16 @@ python -m venv venv
 
 3. Activate the virtual environment:
 
-source venv/bin/activate #MacOS/Linux
+source venv/bin/activate    #MacOS/Linux
 
-venv\Scripts\activate #Windows
+venv\Scripts\activate    #Windows
 
 4. Install dependencies:  
 
 pip install flask flask_sqlalchemy flask_migrate flask_jwt_extended
+
 pip install flask-cors
+
 pip install flask-bcrypt
 
 5. Initialize the database:
