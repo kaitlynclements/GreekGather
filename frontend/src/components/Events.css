@@ -10,6 +10,7 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     border-radius: 8px;
     padding: 20px;
+    margin-bottom: 30px;
 }
 
 .event-dot {
@@ -42,4 +43,45 @@
 
 .create-event-btn:hover {
     background-color: #002244;
+}
+
+.upcoming-events {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.upcoming-events h3 {
+    margin-top: 0;
+    color: #003366;
+}
+
+.upcoming-events ul {
+    list-style: none;
+    padding: 0;
+}
+
+.upcoming-events li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.upcoming-events li:last-child {
+    border-bottom: none;
+}
+
+/* Calendar overrides */
+.react-calendar__tile--active {
+    background: #003366 !important;
+}
+
+.react-calendar__tile--now {
+    background: #e6f3ff !important;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+    background-color: #002244 !important;
+    color: white;
 }
