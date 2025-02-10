@@ -3,11 +3,9 @@
 from flask import Blueprint, request, jsonify
 from database import db
 from models import User, Chapter
-from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
-bcrypt = Bcrypt()
-auth_routes = Blueprint("auth_routes", __name__)
+auth_routes = Blueprint("auth", __name__)
 
 
 @auth_routes.route("/get_chapters", methods=["GET"])
@@ -39,8 +37,8 @@ def register():
     if User.query.filter_by(email=email).first():
         return jsonify({"error": "User already exists"}), 400
 
-    hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
-    new_user = User(name=name, email=email, password=hashed_password)
+    new_user = User(name=name, email=email)
+    new_user.set_password(password)  # Using the new set_password method
 
     db.session.add(new_user)
     db.session.commit()
@@ -57,11 +55,13 @@ def login():
 
     user = User.query.filter_by(email=email).first()
 
-    if user and bcrypt.check_password_hash(user.password, password):
+    if user and user.check_password(password):  # Using the new check_password method
         access_token = create_access_token(identity=user.id)
-        return jsonify(
-            {"token": access_token, "role": user.role, "chapter_id": user.chapter_id}
-        )
+        return jsonify({
+            "token": access_token,
+            "role": user.role,
+            "chapter_id": user.chapter_id
+        })
 
     return jsonify({"error": "Invalid credentials"}), 401
 
