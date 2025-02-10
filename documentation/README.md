@@ -28,7 +28,6 @@ pip install flask flask_sqlalchemy flask_migrate flask_jwt_extended
 
 pip install flask-cors
 
-pip install flask-bcrypt
 
 5. Initialize the database:
 
