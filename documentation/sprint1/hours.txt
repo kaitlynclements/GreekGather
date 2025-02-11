@@ -4,9 +4,9 @@ Kaitlyn Clements:
     Total: 3 hours
 
 Taylor Slade: 
-    ...
+    02/11: 2 hours, attempting debugging of Create a Chapter, the frontend is now sending the request properly but the backend seems to be encountering an error in the format of the JSON request. have not pushed changes and will continue to work on this.
 
-    Total: 0 hours
+    Total: 2 hours
 
 Aaditi Chinawalkar:
     ...
