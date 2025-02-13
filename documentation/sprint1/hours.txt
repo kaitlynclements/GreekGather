@@ -19,9 +19,11 @@ Sam Muehlebach:
     Total: 0 hours
 
 Lizzie Soltis: 
-    ...
+    02/04: 6 hours. Created calendar and event page. Got login and register functioning.
+    02/09: 1 hour. Debugging import errors.
+    02/10: 2 hours. Fixing login and register bugs cause by import changes.
 
-    Total: 0 hours
+    Total: 8 hours
 
 
 Total Group Hours: 3 
