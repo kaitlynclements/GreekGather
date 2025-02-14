@@ -44,3 +44,16 @@
 .register-form button:hover {
     background-color: #002244;
 }
+
+.password-requirements {
+    font-size: 12px;
+    text-align: left;
+    margin-top: 5px;
+    padding: 0;
+    list-style: none;
+}
+
+.password-requirements li {
+    font-size: 12px;
+    margin: 3px 0;
+}

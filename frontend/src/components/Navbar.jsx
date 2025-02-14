@@ -32,6 +32,9 @@ function Navbar() {
                 ) : (
                     <>
                         <li><Link to="/events">Events</Link></li>
+                        <li><Link to="/announcements">View Announcements</Link></li>
+                        <li><Link to="/manage-events">Manage Events</Link></li>
+                        <li><Link to="/track-hours">Track Study & Service Hours</Link></li>
                         <li className="profile-section">
                             <span>👤 {username || "Profile"}</span>
                         </li>

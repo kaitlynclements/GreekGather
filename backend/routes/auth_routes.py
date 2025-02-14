@@ -7,10 +7,24 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 
 auth_routes = Blueprint("auth", __name__)
 
+# Password validation function
+def is_valid_password(password):
+    return (
+        len(password) >= 8 and
+        any(char.isdigit() for char in password) and
+        any(char.islower() for char in password) and
+        any(char.isupper() for char in password) and
+        any(char in "!@#$%^&*()-_+=<>?/" for char in password)
+    )
 
+# ✅ Fetch all Chapters (Fixes dropdown issue)
 @auth_routes.route("/get_chapters", methods=["GET"])
 def get_chapters():
     chapters = Chapter.query.all()
+
+    if not chapters:
+        return jsonify({"chapters": []})  # ✅ Return empty list instead of error
+
     return jsonify(
         {
             "chapters": [
@@ -37,6 +51,15 @@ def register():
     if User.query.filter_by(email=email).first():
         return jsonify({"error": "User already exists"}), 400
 
+    # Validate email format
+    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    if not re.match(email_regex, email):
+        return jsonify({"error": "Invalid email format"}), 400
+
+    # Validate password strength
+    if not is_valid_password(password):
+        return jsonify({"error": "Password must be at least 8 characters long, contain at least one digit, one lowercase letter, one uppercase letter, and one special character."}), 400
+
     new_user = User(name=name, email=email)
     new_user.set_password(password)  # Using the new set_password method
 
@@ -50,7 +73,6 @@ def register():
         "chapter_id": new_user.chapter_id,
         "message": "Registration successful"
     })
-
 
 # ✅ User Login
 @auth_routes.route("/login", methods=["POST"])

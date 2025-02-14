@@ -26,7 +26,7 @@ migrate = Migrate(app, db)
 jwt = JWTManager(app)
 
 # Register the blueprint
-app.register_blueprint(auth_routes, url_prefix='/auth')  # Add this line
+app.register_blueprint(auth_routes, url_prefix='/auth')  
 
 @app.route("/")
 def home():

@@ -6,11 +6,18 @@ function JoinChapter() {
     const [selectedChapter, setSelectedChapter] = useState('');
 
     useEffect(() => {
-        fetch('http://127.0.0.1:5000/get_chapters')
-            .then((res) => res.json())
-            .then((data) => setChapters(data.chapters))
-            .catch((err) => console.error('Error fetching chapters:', err));
+        fetch("http://127.0.0.1:5000/auth/get_chapters")  // ✅ Updated URL
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.chapters) {
+                    setChapters(data.chapters); // ✅ Store data in state
+                } else {
+                    setChapters([]); // ✅ Prevent undefined issues
+                }
+            })
+            .catch((error) => console.error("Error fetching chapters:", error));
     }, []);
+    
 
     const handleJoinRequest = async (e) => {
         e.preventDefault();
