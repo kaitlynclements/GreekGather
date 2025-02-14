@@ -14,9 +14,9 @@ Aaditi Chinawalkar:
     Total: 0 hours
 
 Sam Muehlebach: 
-    ...
+    2/13: 2 hours, Implemented password requirements, added new buttons and pages, and fixed the chapter selection dropdown
 
-    Total: 0 hours
+    Total: 2 hours
 
 Lizzie Soltis: 
     02/04: 5 hours. Created calendar and event page. Got login and register functioning.
