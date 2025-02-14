@@ -8,9 +8,10 @@ from flask_jwt_extended import JWTManager
 from database import db
 from models import User, Event, EventMonitor  # ✅ Import all models
 from routes.auth_routes import auth_routes  # Add this import
+from routes.event_routes import event_routes
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"])  
 
 # ✅ Database Configuration
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///greekgather.db"
@@ -26,7 +27,8 @@ migrate = Migrate(app, db)
 jwt = JWTManager(app)
 
 # Register the blueprint
-app.register_blueprint(auth_routes, url_prefix='/auth')  
+app.register_blueprint(auth_routes, url_prefix='/auth')
+app.register_blueprint(event_routes)
 
 @app.route("/")
 def home():

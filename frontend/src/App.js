@@ -9,6 +9,7 @@ import './components/Navbar.css';
 import CreateChapter from './components/CreateChapter';
 import JoinChapter from './components/JoinChapter';
 import AssignRole from './components/AssignRole';
+import ManageEvents from './components/ManageEvents';
 
 function App() {
     const [userRole, setUserRole] = useState(null);
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/create_chapter" element={<CreateChapter />} />
                 <Route path="/join_chapter" element={<JoinChapter />} />
                 <Route path="/assign_role" element={userRole === 'admin' ? <AssignRole /> : <Navigate to="/" />} />
+                <Route path="/manage-events" element={(userRole === 'vp' || userRole === 'admin') ? <ManageEvents /> : <Navigate to="/" />} />
             </Routes>
         </Router>
     );

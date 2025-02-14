@@ -28,7 +28,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(50), default="member")  # Roles: member, vp, admin
-    chapter_id = db.Column(db.Integer, db.ForeignKey("chapter.id"))
+    chapter_id = db.Column(db.Integer, db.ForeignKey('chapter.id'), nullable=True)  
 
     def set_password(self, password):
         self.password = generate_password_hash(password, method='pbkdf2:sha256')
@@ -43,11 +43,20 @@ class User(db.Model):
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    date = db.Column(db.String(100), nullable=False)
-    chapter_id = db.Column(db.Integer, db.ForeignKey("chapter.id"), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    date = db.Column(db.String(50), nullable=False)
+    location = db.Column(db.String(150), nullable=False)
+    eventType = db.Column(db.String(50), nullable=False)  # Social, Service, Academics, etc.
 
-    def __repr__(self):
-        return f"<Event {self.name}>"
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "date": self.date,
+            "location": self.location,
+            "eventType": self.eventType
+        }
 
 
 class EventMonitor(db.Model):
