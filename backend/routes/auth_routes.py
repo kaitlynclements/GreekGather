@@ -43,7 +43,13 @@ def register():
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({"message": "User registered successfully"})
+    access_token = create_access_token(identity=str(new_user.id))
+    return jsonify({
+        "token": access_token,
+        "role": new_user.role,
+        "chapter_id": new_user.chapter_id,
+        "message": "Registration successful"
+    })
 
 
 # ✅ User Login
@@ -56,7 +62,7 @@ def login():
     user = User.query.filter_by(email=email).first()
 
     if user and user.check_password(password):  # Using the new check_password method
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
         return jsonify({
             "token": access_token,
             "role": user.role,
@@ -70,37 +76,53 @@ def login():
 @auth_routes.route("/create_chapter", methods=["POST"])
 @jwt_required()
 def create_chapter():
-    data = request.json
-    organization_name = data.get("organization_name")
-    chapter_name = data.get("chapter_name")
-    user_id = get_jwt_identity()
+    try:
+        data = request.json
+        
+        if not data:
+            return jsonify({"error": "No JSON data received"}), 422
+            
+        organization_name = data.get("organization_name")
+        chapter_name = data.get("chapter_name")
+        
+        if not organization_name or not chapter_name:
+            return jsonify({"error": "Missing required fields"}), 422
+            
+        user_id = get_jwt_identity()
 
-    # Get user making the request
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({"error": "User not found"}), 404
+        # Get user making the request
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
 
-    # Ensure the exact same chapter does not already exist
-    if Chapter.query.filter_by(
-        organization_name=organization_name, chapter_name=chapter_name
-    ).first():
-        return jsonify({"error": "Chapter already exists"}), 400
+        # Ensure the exact same chapter does not already exist
+        if Chapter.query.filter_by(
+            organization_name=organization_name, chapter_name=chapter_name
+        ).first():
+            return jsonify({"error": "Chapter already exists"}), 400
 
-    # Assign user as chapter admin
-    user.role = "admin"
-    new_chapter = Chapter(
-        organization_name=organization_name, chapter_name=chapter_name, admin_id=user.id
-    )
+        # Create new chapter and make user the admin
+        new_chapter = Chapter(
+            organization_name=organization_name,
+            chapter_name=chapter_name,
+            admin_id=user.id
+        )
+        
+        # Update user's role and chapter
+        user.role = "admin"
+        user.chapter_id = new_chapter.id
+        
+        db.session.add(new_chapter)
+        db.session.commit()
 
-    db.session.add(new_chapter)
-    db.session.commit()
-
-    return jsonify(
-        {
+        return jsonify({
             "message": f"Chapter {organization_name} - {chapter_name} created successfully",
             "chapter_id": new_chapter.id,
-        }
-    )
+        })
+    except Exception as e:
+        print("Error creating chapter:", str(e))  # Debug print
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 422
 
 
 # ✅ Join an Existing Chapter

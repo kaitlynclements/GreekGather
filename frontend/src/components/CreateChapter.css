@@ -29,3 +29,9 @@
 .create-chapter-form button:hover {
     background-color: #002244;
 }
+
+.error-message {
+    color: #dc3545;
+    margin: 10px 0;
+    text-align: center;
+}
