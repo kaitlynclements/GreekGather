@@ -4,7 +4,7 @@ Kaitlyn Clements:
     Total: 3 hours
 
 Taylor Slade: 
-    02/11: 2 hours, attempting debugging of Create a Chapter, the frontend is now sending the request properly but the backend seems to be encountering an error in the format of the JSON request. have not pushed changes and will continue to work on this.
+    02/11: 2 hours, attempting debugging of Create a Chapter, the frontend is now sending the request properly but the backend seems to be encountering an error in the format of the JSON request.
     02/13: 3 hours testing new features as well as implementing an Event Creation button/form under "Manage Events" that saves created events to database
 
     Total: 5 hours
