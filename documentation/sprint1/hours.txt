@@ -1,7 +1,7 @@
 Kaitlyn Clements: 
-    02/02: 3 Hours, Implementing initial UI and frontend along with minor backend setup. Mostly initial setup of how app is going to run just without total functionality. 
+    02/02: 4 Hours, Implementing initial UI and frontend along with minor backend setup. Mostly initial setup of how app is going to run just without total functionality. Satisfied Menu Page/Dashboard requirement task. 
 
-    Total: 3 hours
+    Total: 4 hours
 
 Taylor Slade: 
     02/11: 2 hours, attempting debugging of Create a Chapter, the frontend is now sending the request properly but the backend seems to be encountering an error in the format of the JSON request.
