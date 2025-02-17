@@ -1,3 +1,13 @@
+'''
+Name: event_routes.py
+Description: handles on backend routes for event creation, viewing events and editing events.
+Programmer's Names: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muelebach
+Date Created: 2/2/2025
+Last Revised: see github 
+Preconditions: event name, date, time, location
+Any known faults: edit event not fully implemented/functioning yet
+'''
+
 # Handles creating and viewing events
 
 from flask import Blueprint, request, jsonify
@@ -11,7 +21,7 @@ event_routes = Blueprint("event_routes", __name__)
 
 @event_routes.route("/events", methods=["GET", "OPTIONS"])  # ✅ FIXED ROUTE
 @jwt_required()
-def get_events():
+def get_events(): 
     if request.method == "OPTIONS":  # ✅ Ensure preflight is properly handled
         response = jsonify({"message": "Preflight request successful"})
         response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
