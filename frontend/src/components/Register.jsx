@@ -1,3 +1,25 @@
+/*
+ * Name: Register.jsx
+ * Description: Registration component for new users to sign up for GreekGather.
+ * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
+ * Created: February 2nd, 2025
+ * Revised: Refer to GitHub Commits
+ * Revisions: Refer to GitHub Commits
+ * Preconditions: User is not logged in and needs to create an account.
+ * Acceptable Inputs: Full name, email, and a valid password meeting security requirements.
+ * Unacceptable Inputs: Passwords that do not meet the validation criteria.
+ * Postconditions: Sends a registration request to the backend, creates an account, and logs in the user.
+ * Return Values: React JSX component.
+ * Errors & Exceptions: 
+ *   - Displays an error message if registration fails.
+ *   - Shows validation messages if the password does not meet requirements.
+ * Side Effects: 
+ *   - Stores authentication token and user role in local storage.
+ *   - Navigates to the events page upon successful registration.
+ * Invariants: Email must be unique, and passwords must meet security criteria.
+ * Known Faults: None identified.
+ */
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Register.css'; // Import the CSS file
