@@ -2,8 +2,8 @@
  * Name: app.py
  * Description: Primary entry point for the GreekGather backend.
  * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
- * Created: [Creation Date]
- * Revised: [Revision Date]
+ * Created: February 2nd, 2025
+ * Revised: Refer to Github commits.
  * Revisions: Refer to Github commits.
  * Preconditions: Flask and dependencies must be installed.
  * Acceptable Inputs: HTTP requests to intended endpoints.
