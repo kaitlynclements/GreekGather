@@ -1,3 +1,22 @@
+/*
+ * Name: AssignRole.jsx
+ * Description: Component for assigning roles to users in GreekGather.
+ * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
+ * Created: February 2nd, 2025
+ * Revised: Refer to Github Commits
+ * Revisions: Refer to Github commits
+ * Preconditions: Admin privileges required.
+ * Acceptable Inputs: User role assignments.
+ * Unacceptable Inputs: Unauthorized access.
+ * Postconditions: User roles updated in the system.
+ * Return Values: React JSX component.
+ * Errors & Exceptions: API errors if role assignment fails.
+ * Side Effects: Updates user permissions dynamically.
+ * Invariants: Only authorized users can assign roles.
+ * Known Faults: N/A.
+ */
+
+
 import React, { useState } from 'react';
 
 function AssignRole() {
