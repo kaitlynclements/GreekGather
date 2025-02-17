@@ -1,8 +1,9 @@
 Kaitlyn Clements: 
-    02/02: 4 Hours, Implementing initial UI and frontend along with minor backend setup. Mostly initial setup of how app is going to run just without total functionality. Satisfied Menu Page/Dashboard requirement task. 
+    02/02: 4 Hours, Implementing initial UI and frontend along with minor backend setup. Mostly initial setup of how app is going to run just without total functionality. Satisfied Menu Page/Dashboard requirement task and Master Organization Account setup requirement. 
     02/15: 1 Hour, Testing and tracking files, removed database directory since it had an addition DB instance and schema.sql which was unused. Only DB should now be backend/instance/greekgather.db which stores all tables. Tables are outlined in models.py for future reference. 
+    02/16: 1 hour, Worked on requirements artifacts for sprint 2, sprint 2 requirements stack, and commenting and summarizing all lines of code. 
 
-    Total: 5 hours
+    Total: 6 hours
 
 Taylor Slade: 
     02/11: 2 hours, attempting debugging of Create a Chapter, the frontend is now sending the request properly but the backend seems to be encountering an error in the format of the JSON request.
