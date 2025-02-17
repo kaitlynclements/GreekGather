@@ -6,12 +6,6 @@ implementing the data structure for users, chapters, events, and related entitie
 
 Authors: Elizabeth Soltis, Aaditing Chinawalkar, Taylor Slade, Kaitlyn Clements, Sam Muehlebach
 
-Revised:
-- 02/02 - Initial implementation
-- 02/04 - Added event monitoring
-- 02/09 - Added chapter management
-- 02/13 - Implemented join requests
-
 Preconditions:
 - Database must be initialized
 - SQLAlchemy must be configured
@@ -43,6 +37,15 @@ Known Limitations:
 - No soft delete
 - Basic password hashing
 - Limited role system
+
+Invariants:
+- Unique user emails and chapter names
+- Passwords must be hashed
+- Valid user roles: "member", "vp", "admin"
+- Single chapter membership per user
+- Valid join request status: "pending", "approved", "rejected"
+- One admin per chapter
+- Referential integrity across all relationships
 """
 # Define tables for users, events, and event monitors
 
