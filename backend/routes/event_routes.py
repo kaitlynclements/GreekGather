@@ -3,8 +3,14 @@ Name: event_routes.py
 Description: handles on backend routes for event creation, viewing events and editing events.
 Programmer's Names: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muelebach
 Date Created: 2/2/2025
-Last Revised: see github 
+Last Revised: see github commits
+Revisions: [date]: [description] (author)
 Preconditions: event name, date, time, location
+acceptable inputs: text based name, valid date and time, text based location
+unacceptable inputs: invalidly formatted dates or times
+postconditions: does backend task or sends JSON error message
+return values: JSON messages
+Side Effects: events added or updated in event database table
 Any known faults: edit event not fully implemented/functioning yet
 '''
 
