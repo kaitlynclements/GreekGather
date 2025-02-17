@@ -27,6 +27,8 @@ function Login() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    /*Sends login credentails to backend for handling user authentication. Stores authentication
+    token and user role in local storage if successful*/
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
