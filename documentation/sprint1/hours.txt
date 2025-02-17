@@ -22,8 +22,9 @@ Aaditi Chinawalkar:
 
 Sam Muehlebach: 
     2/13: 2 hours, Implemented password requirements, added new buttons and pages, and fixed the chapter selection dropdown
+    2/16: 4 hours of testing current functionality, working with group on requirement artifacts, prologuing files, and commenting code
 
-    Total: 2 hours
+    Total: 6 hours
 
 Lizzie Soltis: 
     02/04: 5 hours. Created calendar and event page. Got login and register functioning.
@@ -32,6 +33,6 @@ Lizzie Soltis:
     02/13: 1.5 hours. Implementing Create Chapter functionality
     Total: 9.5 hours
 
-Total: 33 
+Total: 37 
 
 
