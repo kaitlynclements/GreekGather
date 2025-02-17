@@ -23,6 +23,8 @@ function AssignRole() {
     const [email, setEmail] = useState('');
     const [role, setRole] = useState('');
 
+    /* Handles role assignment by sending the backend a POST request. Requires Administrative
+    privileges and valid authentication token*/
     const handleAssign = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('token');  // Ensure user is logged in
