@@ -1,4 +1,21 @@
-/* Adds a simple navbar to navigate between pages */
+/*
+ * Name: Navbar.jsx
+ * Description: Navigation bar component for GreekGather.
+ * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
+ * Created: February 2nd, 2025
+ * Revised: Refer to Github Commits
+ * Revisions: Refer to Github Commits
+ * Preconditions: React application must be running.
+ * Acceptable Inputs: Props including `userRole` (optional).
+ * Unacceptable Inputs: None.
+ * Postconditions: Renders the navigation bar.
+ * Return Values: React JSX.
+ * Errors & Exceptions: None expected.
+ * Side Effects: UI changes dynamically.
+ * Invariants: Navbar must be accessible across the app.
+ * Known Faults: N/A.
+ */
+
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
