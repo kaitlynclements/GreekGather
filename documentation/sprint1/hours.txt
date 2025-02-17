@@ -13,9 +13,11 @@ Taylor Slade:
     Total: 7 hours
 
 Aaditi Chinawalkar:
-    ...
+       02/14: 3 hours, adding functionality allowing user to request to join a chapter and sending message to user when request has gone through.
+    02/15: 2.5 hours, attempting to add edit event functionality, as well as trying to add title of user whether they are admin, VP, or member status in the website when they login
+    02/16: 1 hour, working with group on requirement artifacts and adding proper documentation to files for administration.
 
-    Total: 0 hours
+    Total: 6.5 hours 
 
 Sam Muehlebach: 
     2/13: 2 hours, Implemented password requirements, added new buttons and pages, and fixed the chapter selection dropdown
