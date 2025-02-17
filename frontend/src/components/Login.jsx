@@ -1,4 +1,21 @@
-/* Allows users to login and sends a request to the backend */
+/*
+ * Name: Login.jsx
+ * Description: Handles user authentication for GreekGather.
+ * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
+ * Created: February 2nd. 2025
+ * Revised: Refer to Github Commits
+ * Revisions: Refer to Github Commits
+ * Preconditions:API endpoints for authentication must be available.
+ * Acceptable Inputs: Username and password fields.
+ * Unacceptable Inputs: Empty credentials.
+ * Postconditions: Logs in user or returns an error.
+ * Return Values: JSX component with login form.
+ * Errors & Exceptions: API errors if login fails.
+ * Side Effects: Updates authentication state.
+ * Invariants: Valid credentials must be provided.
+ * Known Faults: N/A.
+ */
+
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
