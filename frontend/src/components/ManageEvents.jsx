@@ -1,3 +1,22 @@
+/*
+ * Name: ManageEvents.jsx
+ * Description: Component for managing events in GreekGather.
+ * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
+ * Created: February 2nd, 2025
+ * Revised: Refer to Github Commits
+ * Revisions: Refer to Github Commits
+ * Preconditions: User must have appropriate permissions to manage events.
+ * Acceptable Inputs: Event details (name, date, description).
+ * Unacceptable Inputs: Invalid event data.
+ * Postconditions: Updates or creates events in the system.
+ * Return Values: React JSX component.
+ * Errors & Exceptions: API errors if event operations fail.
+ * Side Effects: Updates the events list dynamically.
+ * Invariants: Events must be correctly displayed and editable.
+ * Known Faults: N/A.
+ */
+
+
 import React, { useState, useEffect } from 'react';
 import './ManageEvents.css';
 
