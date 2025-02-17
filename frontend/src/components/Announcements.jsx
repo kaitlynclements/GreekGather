@@ -20,6 +20,7 @@
 import React from 'react';
 import './Announcements.css';
 
+/*Function displaying greetings text on Announcements page.*/
 function Announcements() {
     return (
         <div className="announcements-container">
