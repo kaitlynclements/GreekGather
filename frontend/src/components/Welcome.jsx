@@ -1,3 +1,21 @@
+/*
+ * Name: Welcome.jsx
+ * Description: Welcome screen for GreekGather, providing options to create or join a chapter.
+ * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
+ * Created: February 2nd, 2025
+ * Revised: Refer to GitHub Commits
+ * Revisions: Refer to GitHub Commits
+ * Preconditions: User is not logged in or has not joined a chapter yet.
+ * Acceptable Inputs: Click actions for navigation.
+ * Unacceptable Inputs: N/A (no user input fields).
+ * Postconditions: Navigates user to create or join a chapter, or login if already registered.
+ * Return Values: React JSX component.
+ * Errors & Exceptions: None expected.
+ * Side Effects: Navigates user to different pages based on button clicks.
+ * Invariants: Navigation paths must be valid and correctly routed.
+ * Known Faults: N/A.
+ */
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Welcome.css';
