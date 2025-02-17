@@ -1,3 +1,22 @@
+"""
+ * Name: app.py
+ * Description: Primary entry point for the GreekGather backend.
+ * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
+ * Created: [Creation Date]
+ * Revised: [Revision Date]
+ * Revisions: Refer to Github commits.
+ * Preconditions: Flask and dependencies must be installed.
+ * Acceptable Inputs: HTTP requests to intended endpoints.
+ * Unacceptable Inputs: Incorrect requests.
+ * Postconditions: Routes are registered and server starts.
+ * Return Values: N/A
+ * Errors & Exceptions: Raises errors if database is not connected.
+ * Side Effects: Flask app initialized
+ * Invariants: Server must remain available.
+ * Known Faults: N/A
+"""
+
+
 # Create an API endpoint to check if the backend is working
 
 from flask import Flask, jsonify
