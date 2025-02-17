@@ -1,3 +1,22 @@
+/*
+ * Name: JoinChapter.jsx
+ * Description: Component for users to join a fraternity/sorority chapter.
+ * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
+ * Created: February 2nd, 2025
+ * Revised: Refer to Github Commits
+ * Revisions: Refer to Github Commits
+ * Preconditions: User must be logged in.
+ * Acceptable Inputs: Chapter selection.
+ * Unacceptable Inputs: None.
+ * Postconditions: User is added to the selected chapter.
+ * Return Values: React JSX component.
+ * Errors & Exceptions: API errors if joining fails.
+ * Side Effects: Updates user's chapter association.
+ * Invariants: A user must belong to only one chapter at a time.
+ * Known Faults: N/A.
+ */
+
+
 import React, { useState, useEffect } from 'react';
 import './JoinChapter.css';
 
