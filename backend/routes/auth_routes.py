@@ -3,9 +3,14 @@ Name: auth_routes.py
 Description: handles on backend routes for user authentication, registration, login, password validation, and chapter creation.
 Programmer's Names: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muelebach
 Date Created: 2/2/2025
-Last Revised: see github 
+Last Revised: refer to github commits
 Revisions: [revisor name]/[revision date]: [Description]
 Preconditions: username and password, Organization Name and chapter
+Acceptable inputs: valid username and password matching with database, chapter and organizations that do not already exist
+unacceptable inputs: invalid password or username, password not meeting requirements for registration, chapters that already exist in database
+Postconditions: does backend task or sends JSON error message
+Return values: Json messages
+Side Effects: things added to database tables
 Any known faults: none
 '''
 
