@@ -23,6 +23,11 @@ function JoinChapter() {
         e.preventDefault();
         const token = localStorage.getItem('token');
 
+        if (!selectedChapter) {
+            alert("Please select a chapter to join.");
+            return;
+        }
+
         const response = await fetch('http://127.0.0.1:5000/auth/request_join_chapter', {
             method: 'POST',
             headers: { 
@@ -33,7 +38,12 @@ function JoinChapter() {
         });
 
         const data = await response.json();
-        alert(data.message);
+        
+        if (!response.ok) {
+            alert(data.error || "An error occurred while sending the request.");
+        } else {
+            alert(data.message);
+        }
     };
 
     return (

@@ -11,7 +11,9 @@ from routes.auth_routes import auth_routes  # Add this import
 from routes.event_routes import event_routes
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True, origins=["http://localhost:3000"])  
+
+# Configure CORS
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 
 # ✅ Database Configuration
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///greekgather.db"

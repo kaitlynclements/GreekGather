@@ -88,5 +88,52 @@ def create_event():
 
     return response, 201
 
+@event_routes.route("/edit_event/<int:event_id>", methods=["OPTIONS"])
+@cross_origin()
+def preflight_edit_event(event_id):
+    response = jsonify({"message": "Preflight request successful"})
+    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    response.headers.add("Access-Control-Allow-Methods", "PUT, OPTIONS")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    response.headers.add("Access-Control-Allow-Credentials", "true")
+    return response, 200
+
+@event_routes.route("/edit_event/<int:event_id>", methods=["PUT"])
+@jwt_required()
+def edit_event(event_id):
+    data = request.json
+    user_id = get_jwt_identity()
+
+    # Find the user
+    user = User.query.get(user_id)
+    if not user or user.role not in ["vp", "admin"]:
+        return jsonify({"error": "Only Vice Presidents and Admins can edit events"}), 403
+
+    # Ensure all fields are present
+    required_fields = ["name", "description", "date", "location", "eventType"]
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Missing field: {field}"}), 400
+
+    # Find the event to edit
+    event = Event.query.get(event_id)
+    if not event:
+        return jsonify({"error": "Event not found"}), 404
+
+    # Update event details
+    event.name = data["name"]
+    event.description = data["description"]
+    event.date = data["date"]
+    event.location = data["location"]
+    event.eventType = data["eventType"]
+
+    db.session.commit()
+
+    response = jsonify({"message": "Event updated successfully"})
+    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    response.headers.add("Access-Control-Allow-Credentials", "true")
+
+    return response, 200
+
 
 

@@ -2,7 +2,7 @@
 
 from flask import Blueprint, request, jsonify
 from database import db
-from models import User, Chapter
+from models import User, Chapter, JoinRequest
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import re
 
@@ -209,18 +209,20 @@ def request_join_chapter():
     user_id = get_jwt_identity()
     chapter_id = data.get("chapter_id")
 
-    if not Chapter.query.get(chapter_id):
+    if not chapter_id:
+        return jsonify({"error": "Chapter ID is required"}), 400
+
+    chapter = Chapter.query.get(chapter_id)
+    if not chapter:
         return jsonify({"error": "Chapter not found"}), 404
 
     # Check if a request already exists
-    existing_request = JoinRequest.query.filter_by(
+    existing_requests = JoinRequest.query.filter_by(
         user_id=user_id, chapter_id=chapter_id
-    ).first()
-    if existing_request:
-        return (
-            jsonify({"error": "You have already requested to join this chapter"}),
-            400,
-        )
+    ).all()
+    
+    if existing_requests:
+        return jsonify({"error": "You have already requested to join this chapter"}), 400
 
     join_request = JoinRequest(user_id=user_id, chapter_id=chapter_id)
     db.session.add(join_request)

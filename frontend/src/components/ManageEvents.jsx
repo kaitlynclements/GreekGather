@@ -5,12 +5,15 @@ function ManageEvents() {
     const [events, setEvents] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [newEvent, setNewEvent] = useState({
+        id: null,
         name: '',
         description: '',
         date: '',
         location: '',
         eventType: 'Social'
     });
+
+    const [isEditing, setIsEditing] = useState(false);
 
     // ✅ Fetch events from the backend
     useEffect(() => {
@@ -51,29 +54,36 @@ function ManageEvents() {
         setNewEvent({ ...newEvent, [e.target.name]: e.target.value });
     };
 
+    const handleEdit = (event) => {
+        setNewEvent(event);
+        setIsEditing(true);
+        setShowModal(true);
+    };
+
     // ✅ Submit the new event to the backend
     const handleSubmit = async () => {
+        console.log("Submitting event edit...");
         const token = localStorage.getItem('token');
         try {
-            const response = await fetch('http://127.0.0.1:5000/create_event', { // ✅ Fixed URL
-                method: 'POST',
+            const response = await fetch(`http://127.0.0.1:5000/events/edit_event/${newEvent.id}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(newEvent),
             });
-
+            console.log("Response received:", response);
             const data = await response.json();
             if (response.ok) {
-                setEvents([...events, { ...newEvent, id: data.id }]); // ✅ Update state with new event
-                setShowModal(false); // ✅ Close modal
+                setEvents(events.map(event => event.id === newEvent.id ? newEvent : event));
+                setShowModal(false);
             } else {
-                alert(data.error || 'Error creating event');
+                alert(data.error || 'Error updating event');
             }
         } catch (error) {
-            console.error('Error creating event:', error);
-            alert('Failed to create event');
+            console.error('Error updating event:', error);
+            alert('Failed to update event');
         }
     };
 
@@ -96,6 +106,7 @@ function ManageEvents() {
                                 <strong>{event.name}</strong> - ({event.eventType})
                                 <br />
                                 <small>{new Date(event.date).toLocaleString()} | {event.location}</small>
+                                <button onClick={() => handleEdit(event)}>Edit</button>
                             </li>
                         ))}
                     </ul>
@@ -105,7 +116,7 @@ function ManageEvents() {
             {showModal && (
                 <div className="modal">
                     <div className="modal-content">
-                        <h2>Create Event</h2>
+                        <h2>{isEditing ? "Edit Event" : "Create Event"}</h2>
                         <label>Event Name</label>
                         <input type="text" name="name" value={newEvent.name} onChange={handleInputChange} required />
 
@@ -125,8 +136,8 @@ function ManageEvents() {
                             <option value="Academics">Academics</option>
                         </select>
 
-                        <button className="create-event-btn" onClick={handleSubmit}>Create</button>
-                        <button className="cancel-btn" onClick={() => setShowModal(false)}>Cancel</button>
+                        <button onClick={handleSubmit}>{isEditing ? "Update" : "Create"}</button>
+                        <button onClick={() => setShowModal(false)}>Cancel</button>
                     </div>
                 </div>
             )}
