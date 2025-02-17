@@ -1,4 +1,20 @@
-/* Handles API requests to the backend so you can reuse functions */
+"""
+ * Name: api.js
+ * Description: Hnadles API requests to backend for reuse of functions.
+ * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
+ * Created: February 2nd, 2025
+ * Revised: Refer to Github commits.
+ * Revisions: Refer to Github commits.
+ * Preconditions: Flask and dependencies must be installed.
+ * Acceptable Inputs: HTTP requests to intended endpoints.
+ * Unacceptable Inputs: Incorrect requests.
+ * Postconditions: Routes are registered and server starts.
+ * Return Values: N/A
+ * Errors & Exceptions: Raises errors if database is not connected.
+ * Side Effects: Flask app initialized
+ * Invariants: Server must remain available.
+ * Known Faults: N/A
+"""
 
 const API_URL = "http://127.0.0.1:5000";
 
