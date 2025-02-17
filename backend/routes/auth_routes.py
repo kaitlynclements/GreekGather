@@ -28,13 +28,13 @@ def is_valid_password(password):
         any(char in "!@#$%^&*()-_+=<>?/" for char in password)
     )
 
-# ✅ Fetch all Chapters (Fixes dropdown issue)
+# Fetch all Chapters (Fixes dropdown issue)
 @auth_routes.route("/get_chapters", methods=["GET"])
 def get_chapters():
     chapters = Chapter.query.all()
 
     if not chapters:
-        return jsonify({"chapters": []})  # ✅ Return empty list instead of error
+        return jsonify({"chapters": []})  # Return empty list instead of error
 
     return jsonify(
         {
@@ -50,7 +50,7 @@ def get_chapters():
     )
 
 
-# ✅ User Registration
+# User Registration
 @auth_routes.route("/register", methods=["POST"])
 def register():
     data = request.json
@@ -85,7 +85,7 @@ def register():
         "message": "Registration successful"
     })
 
-# ✅ User Login
+# User Login
 @auth_routes.route("/login", methods=["POST"])
 def login():
     data = request.json
@@ -105,7 +105,7 @@ def login():
     return jsonify({"error": "Invalid credentials"}), 401
 
 
-# ✅ Create a New Chapter (Only Admins)
+# Create a New Chapter (Only Admins)
 @auth_routes.route("/create_chapter", methods=["POST"])
 @jwt_required()
 def create_chapter():
@@ -158,7 +158,7 @@ def create_chapter():
         return jsonify({"error": str(e)}), 422
 
 
-# ✅ Join an Existing Chapter
+# Join an Existing Chapter
 @auth_routes.route("/join_chapter", methods=["POST"])
 @jwt_required()
 def join_chapter():
@@ -185,7 +185,7 @@ def join_chapter():
     )
 
 
-# ✅ Assign a Role (Only Admins)
+# Assign a Role (Only Admins)
 @auth_routes.route("/assign_role", methods=["POST"])
 @jwt_required()
 def assign_role():
