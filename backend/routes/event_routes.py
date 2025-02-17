@@ -19,15 +19,15 @@ from flask_cors import CORS, cross_origin
 event_routes = Blueprint("event_routes", __name__)
 
 
-@event_routes.route("/events", methods=["GET", "OPTIONS"])  # ✅ FIXED ROUTE
+@event_routes.route("/events", methods=["GET", "OPTIONS"])  # FIXED ROUTE
 @jwt_required()
 def get_events(): 
-    if request.method == "OPTIONS":  # ✅ Ensure preflight is properly handled
+    if request.method == "OPTIONS":  # Ensure preflight is properly handled
         response = jsonify({"message": "Preflight request successful"})
         response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
         response.headers.add("Access-Control-Allow-Methods", "GET, OPTIONS")
         response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        response.headers.add("Access-Control-Allow-Credentials", "true")  # ✅ MUST be set explicitly
+        response.headers.add("Access-Control-Allow-Credentials", "true")  # Must be set explicitly
         return response, 200
 
     user_id = get_jwt_identity()
@@ -40,7 +40,7 @@ def get_events():
 
     response = jsonify({"events": [event.to_dict() for event in events]})
     response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
-    response.headers.add("Access-Control-Allow-Credentials", "true")  # ✅ Must always be included
+    response.headers.add("Access-Control-Allow-Credentials", "true")  # Must always be included
 
     return response, 200
 
@@ -52,7 +52,7 @@ def preflight_create_event():
     response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
     response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
     response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
-    response.headers.add("Access-Control-Allow-Credentials", "true")  # ✅ Allow credentials
+    response.headers.add("Access-Control-Allow-Credentials", "true")  # Allow credentials
     return response, 200
 
 @event_routes.route("/create_event", methods=["POST"])
@@ -92,7 +92,7 @@ def create_event():
         "id": new_event.id
     })
 
-    # ✅ Set CORS headers manually
+    # Set CORS headers manually
     response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
     response.headers.add("Access-Control-Allow-Credentials", "true")
 
