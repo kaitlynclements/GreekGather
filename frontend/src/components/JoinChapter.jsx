@@ -24,6 +24,8 @@ function JoinChapter() {
     const [chapters, setChapters] = useState([]);
     const [selectedChapter, setSelectedChapter] = useState('');
 
+    /*Retrieves avaliable chapters join request when the form is submitted.
+    Sends a POST request to join the selected chapter.*/
     useEffect(() => {
         fetch("http://127.0.0.1:5000/auth/get_chapters")  // Updated URL
             .then((response) => response.json())
