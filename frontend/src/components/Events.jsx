@@ -29,6 +29,8 @@ function Events() {
     const [userRole, setUserRole] = useState(null);
     const navigate = useNavigate();
 
+    /* Fetches events from backend when component loads. If user is not authenticated
+    they are redirected to login.*/
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -58,6 +60,8 @@ function Events() {
         setUserRole(localStorage.getItem('role'));
     }, [navigate]);
 
+    /* Handles event creation by prompting the user for an event name and sends
+    request to backend. Only avaliable to certain administrative users.*/
     const handleCreateEvent = async () => {
         const eventName = prompt("Enter event name:");
         if (!eventName) return;
