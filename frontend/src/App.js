@@ -1,3 +1,20 @@
+"""
+ * Name: App.js
+ * Description: File created for event logging and creation feature
+ * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
+ * Created: February 2nd, 2025
+ * Revised: Refer to Github commits.
+ * Revisions: Refer to Github commits.
+ * Preconditions: Flask and dependencies must be installed.
+ * Acceptable Inputs: HTTP requests to intended endpoints.
+ * Unacceptable Inputs: Incorrect requests.
+ * Postconditions: Routes are registered and server starts.
+ * Return Values: N/A
+ * Errors & Exceptions: Raises errors if database is not connected.
+ * Side Effects: Flask app initialized
+ * Invariants: Server must remain available.
+ * Known Faults: N/A
+"""
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Welcome from './components/Welcome';
