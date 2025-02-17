@@ -5,6 +5,7 @@ This module defines the database schema and models for the GreekGather applicati
 implementing the data structure for users, chapters, events, and related entities.
 
 Authors: Elizabeth Soltis, Aaditing Chinawalkar, Taylor Slade, Kaitlyn Clements, Sam Muehlebach
+Created: 02/02
 
 Preconditions:
 - Database must be initialized
