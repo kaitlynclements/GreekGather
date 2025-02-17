@@ -10,7 +10,8 @@ Taylor Slade:
     02/11: 2 hours, attempting debugging of Create a Chapter, the frontend is now sending the request properly but the backend seems to be encountering an error in the format of the JSON request.
     02/13: 3 hours, testing new features as well as implementing an Event Creation button/form under "Manage Events" that saves created events to database
     02/14: 2 hours, finished Event Creation and Logging implementation and debugging
-    Total: 7 hours
+    02/16: 1 hour, testing sprint 1 requirement features, updating sprint 2 requirements stack, and adding proper documentation to files
+    Total: 8 hours
 
 Aaditi Chinawalkar:
        02/14: 3 hours, adding functionality allowing user to request to join a chapter and sending message to user when request has gone through.
@@ -30,5 +31,7 @@ Lizzie Soltis:
     02/10: 2 hours. Fixing login and register bugs cause by import changes.
     02/13: 1.5 hours. Implementing Create Chapter functionality
     Total: 9.5 hours
+
+Total: 33 
 
 
