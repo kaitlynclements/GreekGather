@@ -1,3 +1,21 @@
+/*
+ * Name: CreateChapter.jsx
+ * Description: Component for creating a new fraternity/sorority chapter.
+ * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
+ * Created: February 2nd, 2025
+ * Revised: Refer to Github Commits
+ * Revisions: Refer to Github Commits
+ * Preconditions: Admin privileges required.
+ * Acceptable Inputs: Chapter name and details.
+ * Unacceptable Inputs: Duplicate chapters.
+ * Postconditions: Creates a new chapter in the system.
+ * Return Values: React JSX component.
+ * Errors & Exceptions: API errors if chapter creation fails.
+ * Side Effects: Updates chapter list dynamically.
+ * Invariants: Each chapter must have a unique name.
+ * Known Faults: N/A.
+ */
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CreateChapter.css';
