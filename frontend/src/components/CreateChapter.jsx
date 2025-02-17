@@ -20,12 +20,15 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CreateChapter.css';
 
+
 function CreateChapter() {
     const [organizationName, setOrganizationName] = useState('');
     const [chapterName, setChapterName] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    /*Handles creation of new chapter by sending the backend a POST request.
+    Stores chapter details in localStorage if created successfully or throws an error*/
     const handleCreate = async (e) => {
         e.preventDefault();
         setError('');
