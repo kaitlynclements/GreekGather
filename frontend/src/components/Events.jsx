@@ -1,3 +1,22 @@
+/*
+ * Name: Events.jsx
+ * Description: Component for displaying and managing events in GreekGather.
+ * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
+ * Created: February 2nd, 2025
+ * Revised: Refer to Github Commits
+ * Revisions: Refer to Github Commits
+ * Preconditions: User must be logged in.
+ * Acceptable Inputs: None (fetches events from the backend).
+ * Unacceptable Inputs: None.
+ * Postconditions: Displays a list of upcoming and past events.
+ * Return Values: React JSX component.
+ * Errors & Exceptions: API errors if event data cannot be retrieved.
+ * Side Effects: UI updates dynamically.
+ * Invariants: Events must be displayed accurately.
+ * Known Faults: N/A
+ */
+
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
