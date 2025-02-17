@@ -1,3 +1,13 @@
+'''
+Name: auth_routes.py
+Description: handles on backend routes for user authentication, registration, login, password validation, and chapter creation.
+Programmer's Names: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muelebach
+Date Created: 2/2/2025
+Last Revised: see github 
+Preconditions: username and password, Organization Name and chapter
+Any known faults: none
+'''
+
 # Handles user registration & login
 
 from flask import Blueprint, request, jsonify
