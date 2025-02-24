@@ -1,4 +1,4 @@
-"""
+/**
  * Name: api.js
  * Description: Hnadles API requests to backend for reuse of functions.
  * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
@@ -14,7 +14,7 @@
  * Side Effects: Flask app initialized
  * Invariants: Server must remain available.
  * Known Faults: N/A
-"""
+*/
 
 const API_URL = "http://127.0.0.1:5000";
 

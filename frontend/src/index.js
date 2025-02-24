@@ -1,4 +1,4 @@
-"""
+/** 
  * Name: index.js
  * Description: This file is the entry point for React 
  * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
@@ -14,7 +14,7 @@
  * Side Effects: Flask app initialized
  * Invariants: Server must remain available.
  * Known Faults: N/A
-"""
+*/
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';

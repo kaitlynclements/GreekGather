@@ -1,4 +1,4 @@
-"""
+/**
  * Name: App.test.js
  * Description: Test file used for authentication, database setup, login and registering functionalities, and adding calendar
  * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
@@ -14,7 +14,7 @@
  * Side Effects: Flask app initialized
  * Invariants: Server must remain available.
  * Known Faults: N/A
-"""
+*/
 import { render, screen } from '@testing-library/react';
 import App from './App';
 

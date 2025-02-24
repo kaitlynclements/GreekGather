@@ -1,4 +1,4 @@
-"""
+/**
  * Name: App.js
  * Description: File created for event logging and creation feature
  * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
@@ -14,7 +14,7 @@
  * Side Effects: Flask app initialized
  * Invariants: Server must remain available.
  * Known Faults: N/A
-"""
+*/
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Welcome from './components/Welcome';

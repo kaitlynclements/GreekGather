@@ -122,7 +122,7 @@ class User(db.Model):
         self.password = generate_password_hash(password, method='pbkdf2:sha256')
 
     def check_password(self, password):
-         """
+        """
         Verify a password against the hash
         
         Args:

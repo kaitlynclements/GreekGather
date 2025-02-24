@@ -1,4 +1,4 @@
-"""
+/** 
  * Name: reportWebVitals.js
  * Description: This file will measure and report website metrics 
  * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
@@ -14,7 +14,7 @@
  * Side Effects: Flask app initialized
  * Invariants: Server must remain available.
  * Known Faults: N/A
-"""
+*/
 const reportWebVitals = onPerfEntry => {
   if (onPerfEntry && onPerfEntry instanceof Function) {
     import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
