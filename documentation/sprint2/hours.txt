@@ -1,1 +1,4 @@
-
+Sam Muehlebach
+  2/24: 1 hour working on event calendar and addressing database issue with events
+  2/35: 4 hours of addressing database issue with events
+Total: 5 hours
