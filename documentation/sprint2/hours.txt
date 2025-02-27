@@ -5,5 +5,5 @@ Total: 5 hours
 
 Lizzie Soltis:
   2/24: .5 hour debugging compilation errors caused by comment issues
-  2/25: 
-Total: 
+  2/25: 1.5 fixing event creation and edit event
+Total: 2 hours
