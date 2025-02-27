@@ -83,26 +83,54 @@ function ManageEvents() {
     const handleSubmit = async () => {
         console.log("Submitting event edit...");
         const token = localStorage.getItem('token');
-        try {
-            const response = await fetch(`http://127.0.0.1:5000/events/edit_event/${newEvent.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(newEvent),
-            });
+        if (!newEvent.id) {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/create_event', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(newEvent),
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Error creating event');
+                }
+                
+                const data = await response.json();
+                setEvents([...events, { ...newEvent, id: data.id }]);
+                setShowModal(false);
+                
+            } catch (error) {
+                console.error('Error creating event:', error);
+                alert('Failed to create event');
+            }
+        } else {
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/edit_event/${newEvent.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(newEvent),
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Error updating event');
+                }
+                
+                
             console.log("Response received:", response);
             const data = await response.json();
-            if (response.ok) {
-                setEvents(events.map(event => event.id === newEvent.id ? newEvent : event));
-                setShowModal(false);
-            } else {
-                alert(data.error || 'Error updating event');
-            }
+            setEvents(events.map(event => event.id === newEvent.id ? newEvent : event));
+            setShowModal(false);
+            
         } catch (error) {
-            console.error('Error updating event:', error);
-            alert('Failed to update event');
+                console.error('Error updating event:', error);
+                alert('Failed to update event');
+            }
         }
     };
 
