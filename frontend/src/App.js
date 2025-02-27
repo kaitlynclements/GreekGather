@@ -27,15 +27,15 @@ import CreateChapter from './components/CreateChapter';
 import JoinChapter from './components/JoinChapter';
 import AssignRole from './components/AssignRole';
 import ManageEvents from './components/ManageEvents';
+import RequestDashboard from "./components/RequestDashboard";
 
 function App() {
-    const [userRole, setUserRole] = useState(null);
+    const [userRole, setUserRole] = useState(null); // Start as null
 
     useEffect(() => {
-        const storedRole = localStorage.getItem('role');
-        if (storedRole) {
-            setUserRole(storedRole);
-        }
+        const role = localStorage.getItem("role") || "guest";  // Default to "guest"
+        setUserRole(role);
+        console.log("Updated userRole:", role);
     }, []);
 
     return (
@@ -50,6 +50,13 @@ function App() {
                 <Route path="/join_chapter" element={<JoinChapter />} />
                 <Route path="/assign_role" element={userRole === 'admin' ? <AssignRole /> : <Navigate to="/" />} />
                 <Route path="/manage-events" element={(userRole === 'vp' || userRole === 'admin') ? <ManageEvents /> : <Navigate to="/" />} />
+                <Route 
+                    path="/request-dashboard" 
+                    element={
+                        userRole === null ? null :  // ✅ Prevents rendering until userRole is loaded
+                        (userRole === "admin" ? <RequestDashboard /> : <Navigate to="/" />)
+                    }
+                />
             </Routes>
         </Router>
     );

@@ -19,28 +19,39 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { FaChevronDown } from "react-icons/fa";  // Import arrow icon
 import './Navbar.css';
 
 function Navbar() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState('');
+    const [userRole, setUserRole] = useState('');
+    const [isExpanded, setIsExpanded] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        setIsLoggedIn(!!token); // Convert to boolean (true if logged in)
+        setIsLoggedIn(!!token);
 
-        // Get username from localStorage (to be set at login)
         const storedUsername = localStorage.getItem('username');
-        if (storedUsername) {
-            setUsername(storedUsername);
-        }
+        const storedRole = localStorage.getItem('role');
+
+        if (storedUsername) setUsername(storedUsername);
+        if (storedRole) setUserRole(storedRole);
     }, []);
 
     return (
-        <nav className="navbar">
+        <nav className={`navbar ${isExpanded ? 'expanded' : ''}`} 
+             onMouseEnter={() => setIsExpanded(true)} 
+             onMouseLeave={() => setIsExpanded(false)}>
+
+            <div className="navbar-header">
+                <span className="nav-title">GreekGather</span>
+                <FaChevronDown className={`nav-arrow ${isExpanded ? 'rotated' : ''}`} />
+            </div>
+
             <ul className="nav-list">
                 <li><Link to="/">Home</Link></li>
-                
+
                 {!isLoggedIn ? (
                     <>
                         <li><Link to="/login">Login</Link></li>
@@ -52,6 +63,11 @@ function Navbar() {
                         <li><Link to="/announcements">View Announcements</Link></li>
                         <li><Link to="/manage-events">Manage Events</Link></li>
                         <li><Link to="/track-hours">Track Study & Service Hours</Link></li>
+
+                        {userRole === "admin" && (
+                            <li><Link to="/request-dashboard" className="admin-button">Manage Membership Requests</Link></li>
+                        )}
+
                         <li className="profile-section">
                             <span>👤 {username || "Profile"}</span>
                         </li>

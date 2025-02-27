@@ -1,48 +1,107 @@
+/* Navbar Base */
 .navbar {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     background-color: #003366;
-    padding: 15px 0; /* Increase padding for height */
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-    height: 60px; /* Adjust height */
+    height: 50px;
+    transition: height 0.3s ease-in-out;
+    overflow: hidden;
 }
 
-.nav-list {
-    list-style: none;
+/* ✅ Navbar Expanded Effect (Reduced Size) */
+.navbar.expanded {
+    height: 100px; 
+}
+
+/* ✅ Navbar Header with Arrow */
+.navbar-header {
     display: flex;
-    gap: 30px; /* Increase spacing between items */
+    align-items: center;
+    gap: 10px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 20px;
+}
+
+/* ✅ Rotating Arrow */
+.nav-arrow {
+    font-size: 16px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.navbar.expanded .nav-arrow {
+    transform: rotate(180deg);
+}
+
+/* ✅ Navigation List */
+.nav-list {
+    list-style-type: none;
+    display: flex;
+    gap: 25px; /* Increased spacing between items */
     padding: 0;
     margin: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
 }
 
+/* ✅ Show Links When Expanded */
+.navbar.expanded .nav-list {
+    opacity: 1;
+}
+
+/* ✅ Navigation Links */
 .nav-list li {
-    display: inline;
+    display: flex;
+    align-items: center;
 }
 
 .nav-list a {
     color: white;
     text-decoration: none;
-    font-size: 18px; /* Increase font size */
+    font-size: 16px;
     font-weight: bold;
-    padding: 10px 15px; /* Add padding around links */
+    padding: 10px 15px;
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
 .nav-list a:hover {
     text-decoration: underline;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
 }
 
-body {
-    padding-top: 80px; /* Prevent content from being hidden under navbar */
+/* ✅ Admin Button Styling */
+.admin-button {
+    background-color: #FFD700;
+    color: #003366;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out;
 }
 
+.admin-button:hover {
+    background-color: #FFC107;
+}
+
+/* ✅ Profile Section */
 .profile-section {
     color: white;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     padding: 10px 15px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+
+/* ✅ Prevent Content Overlap */
+body {
+    padding-top: 70px;
 }
