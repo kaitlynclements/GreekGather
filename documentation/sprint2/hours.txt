@@ -9,8 +9,8 @@ Lizzie Soltis:
 Total: 2 hours
 
 Kaitlyn Clements: 
-  ...
-Total: 0 Hours
+  02/27: 1.5 hours Creating requirements stack and requirements artifacts & writing user stories for sprint 3. 
+Total: 1.5 Hours
 
 Taylor Slade:
   ...
