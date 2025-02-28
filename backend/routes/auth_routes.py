@@ -21,8 +21,10 @@ from database import db
 from models import User, Chapter, JoinRequest
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import re
+from flask_cors import CORS
 
 auth_routes = Blueprint("auth", __name__)
+CORS(auth_routes, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
 # Password validation function
 def is_valid_password(password):
@@ -91,7 +93,6 @@ def register():
         "message": "Registration successful"
     })
 
-# User Login
 @auth_routes.route("/login", methods=["POST"])
 def login():
     data = request.json
@@ -100,12 +101,15 @@ def login():
 
     user = User.query.filter_by(email=email).first()
 
-    if user and user.check_password(password):  # Using the new check_password method
-        access_token = create_access_token(identity=str(user.id))
+    if user and user.check_password(password):
+        access_token = create_access_token(identity=user.id)
+
+        print(f"DEBUG: Logging in {user.email} with chapter_id {user.chapter_id}")  # Debugging
+
         return jsonify({
             "token": access_token,
             "role": user.role,
-            "chapter_id": user.chapter_id
+            "chapter_id": user.chapter_id if user.chapter_id else None  # ✅ Ensure this is returned
         })
 
     return jsonify({"error": "Invalid credentials"}), 401
@@ -117,50 +121,45 @@ def login():
 def create_chapter():
     try:
         data = request.json
-        
-        if not data:
-            return jsonify({"error": "No JSON data received"}), 422
-            
-        organization_name = data.get("organization_name")
-        chapter_name = data.get("chapter_name")
-        
-        if not organization_name or not chapter_name:
-            return jsonify({"error": "Missing required fields"}), 422
-            
         user_id = get_jwt_identity()
 
-        # Get user making the request
         user = User.query.get(user_id)
         if not user:
             return jsonify({"error": "User not found"}), 404
 
-        # Ensure the exact same chapter does not already exist
-        if Chapter.query.filter_by(
-            organization_name=organization_name, chapter_name=chapter_name
-        ).first():
+        organization_name = data.get("organization_name")
+        chapter_name = data.get("chapter_name")
+
+        if not organization_name or not chapter_name:
+            return jsonify({"error": "Missing required fields"}), 422
+
+        # Ensure the chapter does not already exist
+        if Chapter.query.filter_by(organization_name=organization_name, chapter_name=chapter_name).first():
             return jsonify({"error": "Chapter already exists"}), 400
 
-        # Create new chapter and make user the admin
+        # Create new chapter and assign admin
         new_chapter = Chapter(
             organization_name=organization_name,
             chapter_name=chapter_name,
             admin_id=user.id
         )
-        
-        # Update user's role and chapter
+        db.session.add(new_chapter)
+        db.session.commit()  # ✅ Commit the new chapter first
+
+        # ✅ Now assign chapter_id to the user and commit the change
         user.role = "admin"
         user.chapter_id = new_chapter.id
-        
-        db.session.add(new_chapter)
-        db.session.commit()
+        db.session.commit()  # ✅ Commit again to update the user
+
+        print(f"DEBUG: Created chapter {new_chapter.id} and assigned user {user.email} to it.")
 
         return jsonify({
             "message": f"Chapter {organization_name} - {chapter_name} created successfully",
             "chapter_id": new_chapter.id,
         })
     except Exception as e:
-        print("Error creating chapter:", str(e))  # Debug print
         db.session.rollback()
+        print("Error creating chapter:", str(e))  # Debug print
         return jsonify({"error": str(e)}), 422
 
 
@@ -169,26 +168,21 @@ def create_chapter():
 @jwt_required()
 def join_chapter():
     data = request.json
-    organization_name = data.get("organization_name")
-    chapter_name = data.get("chapter_name")
     user_id = get_jwt_identity()
 
     user = User.query.get(user_id)
-    chapter = Chapter.query.filter_by(
-        organization_name=organization_name, chapter_name=chapter_name
-    ).first()
+    chapter = Chapter.query.filter_by(chapter_name=data.get("chapter_name")).first()
 
-    if not user or not chapter:
-        return jsonify({"error": "User or Chapter not found"}), 404
+    if not chapter:
+        return jsonify({"error": "Chapter not found"}), 404
 
+    # ✅ Assign chapter_id when user joins
     user.chapter_id = chapter.id
-    db.session.commit()
+    db.session.commit()  # ✅ Ensure commit
 
-    return jsonify(
-        {
-            "message": f"{user.name} has joined {chapter.organization_name} - {chapter.chapter_name}"
-        }
-    )
+    print(f"DEBUG: User {user.email} joined chapter {chapter.id}")
+
+    return jsonify({"message": "Joined chapter successfully", "chapter_id": chapter.id})
 
 
 # Assign a Role (Only Admins)
@@ -274,3 +268,85 @@ def approve_join_request(request_id):
             "message": f"{user.name} has been approved to join {chapter.organization_name} - {chapter.chapter_name}"
         }
     )
+
+from sqlalchemy import text  # Import text for raw SQL queries
+
+@auth_routes.route("/membership_requests", methods=["GET"])
+@jwt_required()
+def get_membership_requests():
+    user_id = get_jwt_identity()
+    admin = User.query.get(user_id)
+
+    if not admin:
+        print("DEBUG: User not found")
+        return jsonify({"error": "User not found"}), 404
+
+    if admin.role != "admin":
+        print("DEBUG: Unauthorized access attempt")
+        return jsonify({"error": "Unauthorized"}), 403
+
+    if not admin.chapter_id:
+        print(f"DEBUG: Admin {admin.email} does not have a chapter_id")
+        return jsonify({"error": "Admin is not associated with any chapter"}), 400
+
+    try:
+        requests = db.session.execute(
+            text("SELECT id, user_id FROM join_request WHERE chapter_id = :chapter_id AND status = 'pending'"),
+            {"chapter_id": admin.chapter_id}
+        ).fetchall()
+
+        print(f"DEBUG: Found {len(requests)} pending membership requests")
+
+        return jsonify([
+            {
+                "id": r.id,
+                "name": User.query.get(r.user_id).name if User.query.get(r.user_id) else "Unknown",
+                "email": User.query.get(r.user_id).email if User.query.get(r.user_id) else "Unknown",
+                "user_id": r.user_id
+            }
+            for r in requests
+        ])
+    except Exception as e:
+        print(f"DEBUG: Error fetching requests - {str(e)}")
+        return jsonify({"error": "Server error"}), 500
+
+from flask_cors import cross_origin
+
+
+@auth_routes.route("/membership_requests/<int:request_id>/update", methods=["POST", "OPTIONS"])  # ✅ Ensure OPTIONS is included
+@jwt_required()
+@cross_origin(origin="http://localhost:3000", supports_credentials=True)  # ✅ Fix CORS
+def update_membership_request(request_id):
+    if request.method == "OPTIONS":
+        print(f"DEBUG: Received OPTIONS request for membership_requests/{request_id}/update")
+        return jsonify({"message": "Preflight request successful"}), 200  # ✅ Allow preflight requests
+
+    data = request.json
+    action = data.get("action")
+
+    user_id = get_jwt_identity()
+    admin = User.query.get(user_id)
+
+    if not admin or admin.role != "admin":
+        return jsonify({"error": "Unauthorized"}), 403
+
+    request_entry = JoinRequest.query.get(request_id)
+    if not request_entry:
+        return jsonify({"error": "Request not found"}), 404
+
+    user = User.query.get(request_entry.user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    if action == "approve":
+        user.chapter_id = admin.chapter_id
+        db.session.delete(request_entry)  # Remove request after approval
+        db.session.commit()
+        return jsonify({"message": f"{user.name} has been approved and added to the chapter."})
+
+    elif action == "deny":
+        db.session.delete(request_entry)
+        db.session.commit()
+        return jsonify({"message": f"{user.name} has been denied membership."})
+
+    return jsonify({"error": "Invalid action"}), 400

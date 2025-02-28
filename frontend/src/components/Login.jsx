@@ -37,13 +37,15 @@ function Login() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             });
-
+    
             const data = await response.json();
             if (response.ok) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('role', data.role);
-                window.location.reload();
-                navigate('/events');
+                localStorage.setItem('chapter_id', data.chapter_id); // Store chapter_id
+    
+                navigate('/events'); // Navigate first
+                window.location.reload(); // Reload after navigation
             } else {
                 setError(data.error);
             }
@@ -51,6 +53,7 @@ function Login() {
             console.error('Login error:', error);
         }
     };
+    
 
     return (
         <div className="login-container">
