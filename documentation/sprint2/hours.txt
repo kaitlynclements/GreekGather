@@ -1,7 +1,8 @@
 Sam Muehlebach
   2/24: 1 hour working on event calendar and addressing database issue with events
   2/25: 4 hours of addressing database issue with events
-Total: 5 hours
+  2/27: 2.5 hours implementing working approval and denial of membership requests
+Total: 7.5 hours
 
 Lizzie Soltis:
   2/24: .5 hour debugging compilation errors caused by comment issues
