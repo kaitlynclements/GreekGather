@@ -29,6 +29,7 @@ import AssignRole from './components/AssignRole';
 import ManageEvents from './components/ManageEvents';
 import RequestDashboard from "./components/RequestDashboard";
 import ManageRoles from "./components/ManageRoles";
+import Chapter from "./components/Chapter";
 
 function App() {
     const [userRole, setUserRole] = useState(null); // Start as null
@@ -47,6 +48,7 @@ function App() {
                 <Route path="/login" element={<Login setUserRole={setUserRole} />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/events" element={<Events />} />
+                <Route path="/chapter" element={<Chapter />} />
                 <Route path="/create_chapter" element={<CreateChapter />} />
                 <Route path="/join_chapter" element={<JoinChapter />} />
                 <Route path="/assign_role" element={userRole === 'admin' ? <AssignRole /> : <Navigate to="/" />} />

@@ -24,6 +24,7 @@ from database import db
 from models import User, Event, EventMonitor
 from routes.auth_routes import auth_routes
 from routes.event_routes import event_routes
+from routes.chapter_routes import chapter_routes
 
 app = Flask(__name__)
 
@@ -43,6 +44,7 @@ jwt = JWTManager(app)
 # ✅ Register Blueprints
 app.register_blueprint(auth_routes, url_prefix='/auth')
 app.register_blueprint(event_routes)
+app.register_blueprint(chapter_routes)
 
 @app.route("/")
 def home():

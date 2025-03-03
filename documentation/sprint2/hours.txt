@@ -7,7 +7,8 @@ Total: 7.5 hours
 Lizzie Soltis:
   2/24: .5 hour debugging compilation errors caused by comment issues
   2/25: 1.5 fixing event creation and edit event
-Total: 2 hours
+  3/02: 2.5 hours debugging event and creating orginzational/role hierarchy
+Total: 4.5 hours
 
 Kaitlyn Clements: 
   02/27: 1.5 hours Creating requirements stack and requirements artifacts & writing user stories for sprint 3. 
