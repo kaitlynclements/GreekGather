@@ -22,8 +22,8 @@ permissions to members in their chapter
 Total: 4.75 Hours
 
 Aaditi Chinawalkar: 
-  ...
-Total: 0 Hours
+  2/28: 2 hours debugging and testing create event and join chapter functionalities
+Total: 2 Hours
 
 
 Total Hours for Group: 19.75
