@@ -14,12 +14,13 @@ Kaitlyn Clements:
 Total: 1.5 Hours
 
 Taylor Slade:
-  ...
-Total: 0 Hours
+  3/2: 4 hours addressing various HTML issues with request dashboard and event creation, adding "Assign Roles" page and functionality for admins to assign
+permissions to members in their chapter
+Total: 4 Hours
 
 Aaditi Chinawalkar: 
   ...
 Total: 0 Hours
 
 
-Total Hours for Group: 7
+Total Hours for Group: 15
