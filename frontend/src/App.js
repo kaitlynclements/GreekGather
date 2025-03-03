@@ -28,6 +28,7 @@ import JoinChapter from './components/JoinChapter';
 import AssignRole from './components/AssignRole';
 import ManageEvents from './components/ManageEvents';
 import RequestDashboard from "./components/RequestDashboard";
+import './App.css'; 
 import ManageRoles from "./components/ManageRoles";
 import Chapter from "./components/Chapter";
 
@@ -43,28 +44,27 @@ function App() {
     return (
         <Router>
             <Navbar />
-            <Routes>
-                <Route path="/" element={<Welcome />} />
-                <Route path="/login" element={<Login setUserRole={setUserRole} />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/events" element={<Events />} />
-                <Route path="/chapter" element={<Chapter />} />
-                <Route path="/create_chapter" element={<CreateChapter />} />
-                <Route path="/join_chapter" element={<JoinChapter />} />
-                <Route path="/assign_role" element={userRole === 'admin' ? <AssignRole /> : <Navigate to="/" />} />
-                <Route path="/manage-events" element={(userRole === 'exec' || userRole === 'admin') ? <ManageEvents /> : <Navigate to="/" />} />
-                <Route 
-                    path="/request-dashboard" 
-                    element={
-                        userRole === null ? null :  // ✅ Prevents rendering until userRole is loaded
-                        (userRole === "admin" ? <RequestDashboard /> : <Navigate to="/" />)
-                    }
-                />
-                <Route 
-                    path="/manage-roles" 
-                    element={userRole === "admin" ? <ManageRoles /> : <Navigate to="/" />}  // ✅ Only admins can access
-                />
-            </Routes>
+            <div className="main-content">  {/* ✅ Ensures content is pushed down */}
+                <Routes>
+                    <Route path="/" element={<Welcome />} />
+                    <Route path="/login" element={<Login setUserRole={setUserRole} />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/events" element={<Events />} />
+                    <Route path="/chapter" element={<Chapter />} />
+                    <Route path="/create_chapter" element={<CreateChapter />} />
+                    <Route path="/join_chapter" element={<JoinChapter />} />
+                    <Route path="/assign_role" element={userRole === 'admin' ? <AssignRole /> : <Navigate to="/" />} />
+                    <Route path="/manage-events" element={(userRole === 'exec' || userRole === 'admin') ? <ManageEvents /> : <Navigate to="/" />} />
+                    <Route 
+                        path="/request-dashboard" 
+                        element={userRole === null ? null : (userRole === "admin" ? <RequestDashboard /> : <Navigate to="/" />)}
+                    />
+                    <Route 
+                        path="/manage-roles" 
+                        element={userRole === "admin" ? <ManageRoles /> : <Navigate to="/" />}
+                    />
+                </Routes>
+            </div>
         </Router>
     );
 }
