@@ -12,7 +12,8 @@ Total: 4.5 hours
 
 Kaitlyn Clements: 
   02/27: 1.5 hours Creating requirements stack and requirements artifacts & writing user stories for sprint 3. 
-Total: 1.5 Hours
+  03/02: 1 hour Testing and Debugging while trying to fix Create Event errors
+Total: 2.5 Hours
 
 Taylor Slade:
   3/2: 4 hours addressing various HTML issues with request dashboard and event creation, adding "Assign Roles" page and functionality for admins to assign
@@ -25,4 +26,4 @@ Aaditi Chinawalkar:
 Total: 0 Hours
 
 
-Total Hours for Group: 18.25
+Total Hours for Group: 19.75
