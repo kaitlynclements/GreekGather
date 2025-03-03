@@ -102,7 +102,7 @@ def login():
     user = User.query.filter_by(email=email).first()
 
     if user and user.check_password(password):
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
 
         print(f"DEBUG: Logging in {user.email} with chapter_id {user.chapter_id}")  # Debugging
 
@@ -121,7 +121,7 @@ def login():
 def create_chapter():
     try:
         data = request.json
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
 
         user = User.query.get(user_id)
         if not user:
@@ -350,3 +350,70 @@ def update_membership_request(request_id):
         return jsonify({"message": f"{user.name} has been denied membership."})
 
     return jsonify({"error": "Invalid action"}), 400
+
+
+@auth_routes.route("/chapter_members", methods=["GET", "OPTIONS"])
+@jwt_required()
+def get_chapter_members():
+    if request.method == "OPTIONS":
+        response = jsonify({"message": "Preflight request successful"})
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        response.headers.add("Access-Control-Allow-Methods", "GET, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Authorization, Content-Type")
+        return response, 200
+
+    user_id = int(get_jwt_identity())  # Get logged-in user's ID
+    admin = User.query.get(user_id)
+
+    if not admin or not admin.chapter_id:
+        return jsonify({"error": "User is not associated with any chapter"}), 400
+
+    # Fetch all members in the same chapter
+    members = User.query.filter_by(chapter_id=admin.chapter_id).all()
+
+    response = jsonify([
+        {
+            "id": member.id,
+            "name": member.name,
+            "email": member.email,
+            "role": member.role
+        }
+        for member in members
+    ])
+    
+    # ✅ Explicitly allow CORS
+    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    response.headers.add("Access-Control-Allow-Credentials", "true")
+
+    return response
+
+    
+@auth_routes.route("/assign_user_role", methods=["POST"])
+@jwt_required()
+def assign_user_role():
+    data = request.json
+    target_user_id = int(data.get("user_id"))  # ✅ Expecting user ID
+    new_role = data.get("role")
+
+    valid_roles = ["admin", "exec", "member"]  # ✅ Define allowed roles
+
+    if new_role not in valid_roles:
+        return jsonify({"error": "Invalid role"}), 400
+
+    admin_id = int(get_jwt_identity())  # ✅ Ensure JWT identity is an integer
+    admin = User.query.get(admin_id)
+
+    if not admin or admin.role != "admin":
+        return jsonify({"error": "Only admins can assign roles"}), 403
+
+    # Find target user and check they belong to the same chapter
+    user = User.query.get(target_user_id)
+    if not user or user.chapter_id != admin.chapter_id:
+        return jsonify({"error": "User not found or not in the same chapter"}), 404
+
+    # Update user role
+    user.role = new_role
+    db.session.commit()
+
+    return jsonify({"message": f"{user.name} is now assigned the role of {new_role}."})

@@ -69,7 +69,7 @@ def create_event():
 
     # Find the user
     user = User.query.get(user_id)
-    if not user or user.role not in ["vp", "admin"]:
+    if not user or user.role not in ["exec", "admin"]:
         return jsonify({"error": "Only Vice Presidents and Admins can create events"}), 403
 
     # Ensure the user has a chapter
@@ -122,7 +122,7 @@ def edit_event(event_id):
 
     # Find the user
     user = User.query.get(user_id)
-    if not user or user.role not in ["vp", "admin"]:
+    if not user or user.role not in ["exec", "admin"]:
         return jsonify({"error": "Only Vice Presidents and Admins can edit events"}), 403
 
     # Ensure all fields are present

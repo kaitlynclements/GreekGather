@@ -17,6 +17,7 @@
  */
 
 
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaChevronDown } from "react-icons/fa";  // Import arrow icon
@@ -65,7 +66,10 @@ function Navbar() {
                         <li><Link to="/track-hours">Track Study & Service Hours</Link></li>
 
                         {userRole === "admin" && (
-                            <li><Link to="/request-dashboard" className="admin-button">Manage Membership Requests</Link></li>
+                            <>
+                                <li><Link to="/request-dashboard" className="admin-button">Manage Membership Requests</Link></li>
+                                <li><Link to="/manage-roles" className="admin-button">Manage Roles</Link></li>  
+                            </>
                         )}
 
                         <li className="profile-section">

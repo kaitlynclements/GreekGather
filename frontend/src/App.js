@@ -28,6 +28,7 @@ import JoinChapter from './components/JoinChapter';
 import AssignRole from './components/AssignRole';
 import ManageEvents from './components/ManageEvents';
 import RequestDashboard from "./components/RequestDashboard";
+import ManageRoles from "./components/ManageRoles";
 
 function App() {
     const [userRole, setUserRole] = useState(null); // Start as null
@@ -49,13 +50,17 @@ function App() {
                 <Route path="/create_chapter" element={<CreateChapter />} />
                 <Route path="/join_chapter" element={<JoinChapter />} />
                 <Route path="/assign_role" element={userRole === 'admin' ? <AssignRole /> : <Navigate to="/" />} />
-                <Route path="/manage-events" element={(userRole === 'vp' || userRole === 'admin') ? <ManageEvents /> : <Navigate to="/" />} />
+                <Route path="/manage-events" element={(userRole === 'exec' || userRole === 'admin') ? <ManageEvents /> : <Navigate to="/" />} />
                 <Route 
                     path="/request-dashboard" 
                     element={
                         userRole === null ? null :  // ✅ Prevents rendering until userRole is loaded
                         (userRole === "admin" ? <RequestDashboard /> : <Navigate to="/" />)
                     }
+                />
+                <Route 
+                    path="/manage-roles" 
+                    element={userRole === "admin" ? <ManageRoles /> : <Navigate to="/" />}  // ✅ Only admins can access
                 />
             </Routes>
         </Router>
