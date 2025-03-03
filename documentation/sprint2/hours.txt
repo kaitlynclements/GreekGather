@@ -17,11 +17,12 @@ Total: 1.5 Hours
 Taylor Slade:
   3/2: 4 hours addressing various HTML issues with request dashboard and event creation, adding "Assign Roles" page and functionality for admins to assign
 permissions to members in their chapter
-Total: 4 Hours
+  3/2: 0.75 hours updating navbar and creating dropdown menus for better user experience and more organization
+Total: 4.75 Hours
 
 Aaditi Chinawalkar: 
   ...
 Total: 0 Hours
 
 
-Total Hours for Group: 15
+Total Hours for Group: 18.25
