@@ -24,7 +24,7 @@ function ManageEvents() {
     const [events, setEvents] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [newEvent, setNewEvent] = useState({
-        id: null,
+        id: '',
         name: '',
         description: '',
         date: '',
