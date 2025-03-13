@@ -18,7 +18,7 @@ Any known faults: edit event not fully implemented/functioning yet
 
 from flask import Blueprint, request, jsonify
 from database import db
-from models import Event, User
+from models import Event, User, RSVP
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_cors import CORS, cross_origin
 
@@ -150,6 +150,87 @@ def edit_event(event_id):
     response.headers.add("Access-Control-Allow-Credentials", "true")
 
     return response, 200
+
+
+@event_routes.route("/delete_event/<int:event_id>", methods=["DELETE"])
+@jwt_required()
+def delete_event(event_id):
+    user_id = get_jwt_identity()
+
+    # Find the user
+    user = User.query.get(user_id)
+    if not user or user.role not in ["exec", "admin"]:
+        return jsonify({"error": "Only Vice Presidents and Admins can delete events"}), 403
+
+    # Find the event
+    event = Event.query.get(event_id)
+    if not event:
+        return jsonify({"error": "Event not found"}), 404
+
+    db.session.delete(event)
+    db.session.commit()
+
+    response = jsonify({"message": "Event deleted successfully"})
+    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    response.headers.add("Access-Control-Allow-Credentials", "true")
+
+    return response, 200
+
+@event_routes.route("/events_by_date/<string:date>", methods=["GET"])
+@jwt_required()
+def get_events_by_date(date):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"error": "User not found"}), 403
+
+    events = Event.query.filter(Event.date.startswith(date)).all()
+
+    response = jsonify({"events": [event.to_dict() for event in events]})
+    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    response.headers.add("Access-Control-Allow-Credentials", "true")
+
+    return response, 200
+
+
+@event_routes.route("/rsvp", methods=["POST"])
+@jwt_required()
+def rsvp_event():
+    data = request.json
+    user_id = get_jwt_identity()
+
+    required_fields = ["event_id", "attending", "guests"]
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Missing field: {field}"}), 400
+
+    # Check if RSVP already exists
+    rsvp = RSVP.query.filter_by(user_id=user_id, event_id=data["event_id"]).first()
+
+    if rsvp:
+        rsvp.attending = data["attending"]
+        rsvp.guests = data["guests"]
+    else:
+        rsvp = RSVP(
+            user_id=user_id,
+            event_id=data["event_id"],
+            attending=data["attending"],
+            guests=data["guests"]
+        )
+        db.session.add(rsvp)
+
+    db.session.commit()
+    return jsonify({"message": "RSVP recorded successfully"}), 200
+
+
+@event_routes.route("/rsvp_count/<int:event_id>", methods=["GET"])
+@jwt_required()
+def get_rsvp_count(event_id):
+    rsvps = RSVP.query.filter_by(event_id=event_id, attending=True).all()
+    total_attendees = sum([rsvp.guests + 1 for rsvp in rsvps])  # Including RSVP user
+
+    return jsonify({"event_id": event_id, "total_attendees": total_attendees})
 
 
 

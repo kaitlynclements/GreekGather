@@ -68,6 +68,30 @@ function ManageEvents() {
         fetchEvents();
     }, []);
 
+    const fetchRsvpCounts = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+    
+        try {
+            const responses = await Promise.all(
+                events.map(event =>
+                    fetch(`http://127.0.0.1:5000/rsvp_count/${event.id}`, {
+                        headers: { "Authorization": `Bearer ${token}` },
+                    }).then(res => res.json())
+                )
+            );
+    
+            const updatedEvents = events.map((event, index) => ({
+                ...event,
+                totalAttendees: responses[index].total_attendees || 0
+            }));
+    
+            setEvents(updatedEvents);
+        } catch (error) {
+            console.error("Error fetching RSVP counts:", error);
+        }
+    };
+
     // ✅ Handle form input changes
     const handleInputChange = (e) => {
         setNewEvent({ ...newEvent, [e.target.name]: e.target.value });
@@ -77,6 +101,40 @@ function ManageEvents() {
         setNewEvent(event);
         setIsEditing(true);
         setShowModal(true);
+    };
+
+    const handleDelete = async (eventId) => {
+        const token = localStorage.getItem("token");
+    
+        if (!token) {
+            console.error("No JWT token found, cannot delete event.");
+            return;
+        }
+    
+        if (!window.confirm("Are you sure you want to delete this event?")) {
+            return;
+        }
+    
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/delete_event/${eventId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Error deleting event");
+            }
+    
+            setEvents(events.filter(event => event.id !== eventId)); // Remove event from list
+    
+        } catch (error) {
+            console.error("Error deleting event:", error);
+            alert("Failed to delete event");
+        }
     };
 
     // ✅ Submit the new event to the backend
@@ -134,6 +192,10 @@ function ManageEvents() {
         }
     };
 
+    useEffect(() => {
+        fetchRsvpCounts();
+    }, [events]);
+
     return (
         <div className="manage-events-container">
             <h2>Manage Events</h2>
@@ -149,13 +211,16 @@ function ManageEvents() {
                 ) : (
                     <ul>
                         {events.map(event => (
-                            <li key={event.id}>
-                                <strong>{event.name}</strong> - ({event.eventType})
-                                <br />
-                                <small>{new Date(event.date).toLocaleString()} | {event.location}</small>
-                                <button onClick={() => handleEdit(event)}>Edit</button>
-                            </li>
-                        ))}
+                        <li key={event.id}>
+                        <strong>{event.name}</strong> - ({event.eventType})
+                        <br />
+                        <small>{new Date(event.date).toLocaleString()} | {event.location}</small>
+                        <br />
+                        <strong>RSVP Count: {event.totalAttendees}</strong>
+                        <button onClick={() => handleEdit(event)}>Edit</button>
+                        <button onClick={() => handleDelete(event.id)} style={{ color: "red" }}>Delete</button>
+                    </li>
+                    ))}
                     </ul>
                 )}
             </div>

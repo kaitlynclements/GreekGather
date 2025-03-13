@@ -1,22 +1,3 @@
-/*
- * Name: Events.jsx
- * Description: Component for displaying and managing events in GreekGather.
- * Programmer: Kaitlyn Clements, Taylor Slade, Lizzie Soltis, Aaditi Chinawalkar, Sam Muehlebach
- * Created: February 2nd, 2025
- * Revised: Refer to Github Commits
- * Revisions: Refer to Github Commits
- * Preconditions: User must be logged in.
- * Acceptable Inputs: None (fetches events from the backend).
- * Unacceptable Inputs: None.
- * Postconditions: Displays a list of upcoming and past events.
- * Return Values: React JSX component.
- * Errors & Exceptions: API errors if event data cannot be retrieved.
- * Side Effects: UI updates dynamically.
- * Invariants: Events must be displayed accurately.
- * Known Faults: N/A
- */
-
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
@@ -26,11 +7,16 @@ import './Events.css';
 function Events() {
     const [events, setEvents] = useState([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedDateEvents, setSelectedDateEvents] = useState([]);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [popupDate, setPopupDate] = useState('');
     const [userRole, setUserRole] = useState(null);
     const navigate = useNavigate();
+    const [rsvpPopup, setRsvpPopup] = useState(false);
+    const [rsvpEvent, setRsvpEvent] = useState(null);
+    const [attending, setAttending] = useState(null);
+    const [guests, setGuests] = useState(0);
 
-    /* Fetches events from backend when component loads. If user is not authenticated
-    they are redirected to login.*/
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -52,7 +38,7 @@ function Events() {
                 setEvents(data.events || []);
             } catch (error) {
                 console.error('Error fetching events:', error);
-                setEvents([]); // Set empty array instead of showing error
+                setEvents([]);
             }
         }
 
@@ -60,86 +46,183 @@ function Events() {
         setUserRole(localStorage.getItem('role'));
     }, [navigate]);
 
-    /* Handles event creation by prompting the user for an event name and sends
-    request to backend. Only avaliable to certain administrative users.*/
-    const handleCreateEvent = async () => {
-        const eventName = prompt("Enter event name:");
-        if (!eventName) return;
+    const handleDateClick = async (date) => {
+        setSelectedDate(date);
+        setPopupDate(date.toLocaleDateString());
+        setIsPopupOpen(true);
 
         const token = localStorage.getItem('token');
+        if (!token) {
+            console.error("No JWT token found, cannot fetch events.");
+            return;
+        }
+
         try {
-            const response = await fetch('http://127.0.0.1:5000/events/create_event', {
-                method: 'POST',
+            const formattedDate = date.toISOString().split("T")[0];
+            const response = await fetch(`http://127.0.0.1:5000/events_by_date/${formattedDate}`, {
+                method: "GET",
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    "Authorization": `Bearer ${token}`,
                 },
-                body: JSON.stringify({
-                    name: eventName,
-                    date: selectedDate.toISOString().split('T')[0]
-                }),
             });
 
-            const data = await response.json();
-            if (response.ok) {
-                window.location.reload();
-            } else {
-                alert(data.error || 'Error creating event');
+            if (!response.ok) {
+                throw new Error("Failed to fetch events for the selected date");
             }
+
+            const data = await response.json();
+            setSelectedDateEvents(data.events || []);
         } catch (error) {
-            console.error('Error creating event:', error);
-            alert('Failed to create event');
+            console.error("Error fetching events:", error);
+            setSelectedDateEvents([]);
         }
     };
 
+    const upcomingEvents = events.filter(event => {
+        const eventDate = new Date(event.date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Normalize to start of today
+        const nextWeek = new Date();
+        nextWeek.setDate(today.getDate() + 7);
+        return eventDate >= today && eventDate <= nextWeek;
+    });
+
+    const openRsvpPopup = (event) => {
+        setRsvpEvent(event);
+        setAttending(null);
+        setGuests(0);
+        setRsvpPopup(true);
+    };
+
+    const handleRSVP = async () => {
+        if (attending === null) {
+            alert("Please select if you are attending.");
+            return;
+        }
+    
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("No JWT token found, cannot submit RSVP.");
+            return;
+        }
+    
+        try {
+            const response = await fetch("http://127.0.0.1:5000/rsvp", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    event_id: rsvpEvent.id,
+                    attending,
+                    guests,
+                }),
+            });
+    
+            if (!response.ok) {
+                throw new Error("Error submitting RSVP");
+            }
+    
+            alert("RSVP submitted successfully!");
+            setRsvpPopup(false);
+        } catch (error) {
+            console.error("Error submitting RSVP:", error);
+            alert("Failed to submit RSVP");
+        }
+    };
+    
     return (
         <div className="calendar-container">
             <h2>Chapter Events</h2>
             {userRole === 'vp' && (
-                <button 
-                    className="create-event-btn"
-                    onClick={handleCreateEvent}
-                >
-                    Create Event
-                </button>
+                <button className="create-event-btn" onClick={() => alert('Feature not implemented yet')}>Create Event</button>
             )}
-            
-            <Calendar
-                onChange={setSelectedDate}
-                value={selectedDate}
-                className="react-calendar"
-            />
 
-        <div className="upcoming-events">
-            <h3>Upcoming Events</h3>
-            {events.length === 0 ? (
-                <p>No upcoming events scheduled</p>
-            ) : (
-                <div className="events-grid">
-                    {events.map(event => (
-                        <div key={event.id} className="event-card">
-                            <h3>{event.name}</h3>
-                            <p className="event-date">
-                                {new Date(event.date).toLocaleDateString()}
-                            </p>
-                            {/* Display Event Category */}
-                            {event.eventType && (
-                                <p className="event-category">
-                                    <strong>Category:</strong> {event.eventType}
-                                </p>
-                            )}
-                            {event.description && ( // Ensure event has a description
-                                <p className="event-description">
-                                    <strong>Description:</strong> <br />{event.description}
-                                </p>
-                            )}
-                        </div>
-                    ))}
+            <Calendar onClickDay={handleDateClick} value={selectedDate} className="react-calendar" />
+
+            {isPopupOpen && (
+        <div className="popup">
+            <div className="popup-content">
+                <h2>{popupDate}</h2>
+                {selectedDateEvents.length === 0 ? (
+                    <p>No events scheduled for this day.</p>
+                ) : (
+                    <ul>
+                        {selectedDateEvents.map(event => (
+                            <li key={event.id}>
+                                <strong>{event.name}</strong> - {event.eventType}
+                                <br />
+                                <small>{event.description}</small>
+                                <br />
+                                <small>📍 {event.location}</small>
+                                <br />
+                                <button onClick={() => openRsvpPopup(event)}>RSVP</button>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+                <button onClick={() => setIsPopupOpen(false)}>Close</button>
+            </div>
+        </div>
+    )}
+
+
+<div className="upcoming-events">
+    <h3>Upcoming Events</h3>
+    {upcomingEvents.length === 0 ? (
+        <p>No upcoming events scheduled</p>
+    ) : (
+        <div className="events-grid">
+            {upcomingEvents.map(event => (
+                <div key={event.id} className="event-card">
+                    <h3>{event.name}</h3>
+                    <p className="event-date">
+                        {new Date(event.date).toLocaleDateString()}
+                    </p>
+                    {event.eventType && (
+                        <p className="event-category">
+                            <strong>Category:</strong> {event.eventType}
+                        </p>
+                    )}
+                    {event.description && (
+                        <p className="event-description">
+                            <strong>Description:</strong> <br />{event.description}
+                        </p>
+                    )}
+                    {/* 🔹 ADD RSVP BUTTON HERE 🔹 */}
+                    <button onClick={() => openRsvpPopup(event)}>RSVP</button>
                 </div>
+            ))}
+        </div>
     )}
 </div>
-
+{rsvpPopup && rsvpEvent && (
+    <div className="popup">
+        <div className="popup-content">
+            <h2>RSVP for {rsvpEvent.name}</h2>
+            <label>Will you be attending?</label>
+            <div>
+                <button onClick={() => setAttending(true)}>Yes</button>
+                <button onClick={() => setAttending(false)}>No</button>
+            </div>
+            {attending && (
+                <>
+                    <label>Number of Guests:</label>
+                    <input 
+                        type="number" 
+                        value={guests} 
+                        onChange={(e) => setGuests(parseInt(e.target.value) || 0)}
+                        min="0"
+                    />
+                </>
+            )}
+            <button onClick={handleRSVP}>Submit RSVP</button>
+            <button onClick={() => setRsvpPopup(false)}>Cancel</button>
         </div>
+    </div>
+)}
+</div>
     );
 }
 

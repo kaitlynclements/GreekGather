@@ -216,3 +216,20 @@ class JoinRequest(db.Model):
 
     user = db.relationship("User", backref="join_requests")
     chapter = db.relationship("Chapter", backref="join_requests")
+
+
+class RSVP(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    attending = db.Column(db.Boolean, nullable=False)
+    guests = db.Column(db.Integer, default=0)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "event_id": self.event_id,
+            "attending": self.attending,
+            "guests": self.guests
+        }
