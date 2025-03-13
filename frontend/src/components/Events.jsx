@@ -110,23 +110,35 @@ function Events() {
                 className="react-calendar"
             />
 
-            <div className="upcoming-events">
-                <h3>Upcoming Events</h3>
-                {events.length === 0 ? (
-                    <p>No upcoming events scheduled</p>
-                ) : (
-                    <div className="events-grid">
-                        {events.map(event => (
-                            <div key={event.id} className="event-card">
-                                <h3>{event.name}</h3>
-                                <p className="event-date">
-                                    {new Date(event.date).toLocaleDateString()}
+        <div className="upcoming-events">
+            <h3>Upcoming Events</h3>
+            {events.length === 0 ? (
+                <p>No upcoming events scheduled</p>
+            ) : (
+                <div className="events-grid">
+                    {events.map(event => (
+                        <div key={event.id} className="event-card">
+                            <h3>{event.name}</h3>
+                            <p className="event-date">
+                                {new Date(event.date).toLocaleDateString()}
+                            </p>
+                            {/* Display Event Category */}
+                            {event.eventType && (
+                                <p className="event-category">
+                                    <strong>Category:</strong> {event.eventType}
                                 </p>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+                            )}
+                            {event.description && ( // Ensure event has a description
+                                <p className="event-description">
+                                    <strong>Description:</strong> <br />{event.description}
+                                </p>
+                            )}
+                        </div>
+                    ))}
+                </div>
+    )}
+</div>
+
         </div>
     );
 }
