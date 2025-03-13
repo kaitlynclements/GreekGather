@@ -12,12 +12,12 @@ Kaitlyn Clements:
 Total Hours: 1
 
 Taylor Slade:
-  ...
-Total Hours: 
+  03/13: 2 hours, added delete event button and restructuring event calendar for better organization, added an RSVP button and RSVP count but still needs some debugging
+Total Hours: 2
 
 Aaditi Chinawalkar: 
   ...
 Total Hours: 
 
 
-Total Hours for Group: 1
+Total Hours for Group: 3
