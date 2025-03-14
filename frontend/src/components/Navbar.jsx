@@ -28,6 +28,7 @@ function Navbar() {
     const [userRole, setUserRole] = useState("");
     const [isExpanded, setIsExpanded] = useState(false);
     const [isManageDropdownVisible, setIsManageDropdownVisible] = useState(false);
+    const [isProfileDropdownVisible, setIsProfileDropdownVisible] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -45,7 +46,7 @@ function Navbar() {
             className={`navbar ${isExpanded ? "expanded" : ""}`} 
             onMouseEnter={() => setIsExpanded(true)}
             onMouseLeave={() => {
-                if (!isManageDropdownVisible) setIsExpanded(false);
+                if (!isManageDropdownVisible && !isProfileDropdownVisible) setIsExpanded(false);
             }}
         >
             <div className="navbar-header">
@@ -90,20 +91,29 @@ function Navbar() {
                             </li>
                         )}
 
-                        <li className="profile-section">
-                            <span>👤 {username || "Profile"}</span>
-                        </li>
-
-                        <li>
-                            <Link
-                                to="/"
-                                onClick={() => {
-                                    localStorage.clear();
-                                    window.location.reload();
-                                }}
-                            >
-                                Logout
-                            </Link>
+                        {/* Profile Dropdown */}
+                        <li 
+                            className="dropdown"
+                            onMouseEnter={() => setIsProfileDropdownVisible(true)}
+                            onMouseLeave={() => setIsProfileDropdownVisible(false)}
+                        >
+                            <span className="dropdown-toggle">
+                                👤 {username || "Profile"} <FaChevronDown className="dropdown-arrow" />
+                            </span>
+                            <ul className={`dropdown-menu ${isProfileDropdownVisible ? "visible" : ""}`}>
+                                <li><Link to="/profile">View Profile</Link></li>
+                                <li>
+                                    <Link
+                                        to="/"
+                                        onClick={() => {
+                                            localStorage.clear();
+                                            window.location.reload();
+                                        }}
+                                    >
+                                        Logout
+                                    </Link>
+                                </li>
+                            </ul>
                         </li>
                     </>
                 )}
@@ -113,4 +123,3 @@ function Navbar() {
 }
 
 export default Navbar;
-

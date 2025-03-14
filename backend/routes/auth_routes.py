@@ -417,3 +417,44 @@ def assign_user_role():
     db.session.commit()
 
     return jsonify({"message": f"{user.name} is now assigned the role of {new_role}."})
+
+
+@auth_routes.route("/get_profile", methods=["GET", "OPTIONS"])
+@jwt_required()
+@cross_origin(origin="http://localhost:3000", supports_credentials=True)  # ✅ Allow preflight requests
+def get_profile():
+    if request.method == "OPTIONS":
+        return jsonify({"message": "Preflight request successful"}), 200  # ✅ Ensure OPTIONS response
+
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    return jsonify({
+        "name": user.name,
+        "email": user.email,
+        "phone": user.phone or ""  # Ensure phone is included
+    }), 200
+
+@auth_routes.route("/update_profile", methods=["POST", "OPTIONS"])
+@jwt_required()
+@cross_origin(origin="http://localhost:3000", supports_credentials=True)  # ✅ Allow preflight requests
+def update_profile():
+    if request.method == "OPTIONS":
+        return jsonify({"message": "Preflight request successful"}), 200  # ✅ Ensure OPTIONS response
+
+    user_id = get_jwt_identity()
+    data = request.json
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    user.email = data.get("email", user.email)
+    user.phone = data.get("phone", user.phone)
+
+    db.session.commit()
+
+    return jsonify({"message": "Profile updated successfully!"}), 200

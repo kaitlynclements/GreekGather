@@ -41,8 +41,8 @@ db.init_app(app)
 migrate = Migrate(app, db)
 jwt = JWTManager(app)
 
-# ✅ Register Blueprints
-app.register_blueprint(auth_routes, url_prefix='/auth')
+# ✅ Register Blueprints (Removed URL prefix for auth_routes)
+app.register_blueprint(auth_routes)  # 🚀 Now /get_profile works without /auth prefix
 app.register_blueprint(event_routes)
 app.register_blueprint(chapter_routes)
 
@@ -51,6 +51,4 @@ def home():
     return jsonify({"message": "GreekGather API is running!"})
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()  # Ensure database tables are created
-    app.run(debug=True)
+    app.run(debug=True)  # ✅ Removed db.create_all()

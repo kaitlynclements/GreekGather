@@ -21,6 +21,7 @@ function Chapter() {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         const fetchChapterHierarchy = async () => {
@@ -48,6 +49,16 @@ function Chapter() {
         fetchChapterHierarchy();
     }, []);
 
+    const filteredExecs = chapterMembers.execs.filter(exec =>
+        exec.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        exec.role.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const filteredMembers = chapterMembers.members.filter(member =>
+        member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        member.role.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     if (loading) return <div>Loading chapter information...</div>;
     if (error) return <div>Error: {error}</div>;
 
@@ -55,6 +66,13 @@ function Chapter() {
         <div className="chapter-container">
             <h1>Chapter Hierarchy</h1>
             
+            <input
+                type="text"
+                placeholder="Search by name or role..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+            />
+
             <div className="org-tree">
                 {/* Admin Level */}
                 {chapterMembers.admin && (
@@ -62,29 +80,35 @@ function Chapter() {
                         <div className="member-card admin">
                             <h3>{chapterMembers.admin.name}</h3>
                             <span className="role">Administrator</span>
+                            <p>Email: {chapterMembers.admin.email}</p>
+                            <p>Phone: {chapterMembers.admin.phone || "N/A"}</p>
                         </div>
                     </div>
                 )}
 
                 {/* Exec Level */}
-                {chapterMembers.execs.length > 0 && (
+                {filteredExecs.length > 0 && (
                     <div className="level exec-level">
-                        {chapterMembers.execs.map(exec => (
+                        {filteredExecs.map(exec => (
                             <div key={exec.id} className="member-card exec">
                                 <h3>{exec.name}</h3>
                                 <span className="role">Executive</span>
+                                <p>Email: {exec.email}</p>
+                                <p>Phone: {exec.phone || "N/A"}</p>
                             </div>
                         ))}
                     </div>
                 )}
 
                 {/* Member Level */}
-                {chapterMembers.members.length > 0 && (
+                {filteredMembers.length > 0 && (
                     <div className="level member-level">
-                        {chapterMembers.members.map(member => (
+                        {filteredMembers.map(member => (
                             <div key={member.id} className="member-card member">
                                 <h3>{member.name}</h3>
                                 <span className="role">Member</span>
+                                <p>Email: {member.email}</p>
+                                <p>Phone: {member.phone || "N/A"}</p>
                             </div>
                         ))}
                     </div>

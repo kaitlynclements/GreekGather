@@ -9,32 +9,33 @@ chapter_routes = Blueprint('chapter_routes', __name__)
 def get_chapter_hierarchy():
     user_id = get_jwt_identity()
     current_user = User.query.get(user_id)
-    
+
     if not current_user or not current_user.chapter_id:
         return jsonify({"error": "User not found or not associated with a chapter"}), 404
 
-    # Get all users in the same chapter
+    # Get all users in the chapter
     chapter_members = User.query.filter_by(chapter_id=current_user.chapter_id).all()
-    
-    # Organize members by role
+
     hierarchy = {
         "admin": None,
         "execs": [],
         "members": []
     }
-    
+
     for member in chapter_members:
         member_data = {
             "id": member.id,
             "name": member.name,
-            "role": member.role
+            "role": member.role,
+            "email": member.email,  # ✅ Ensure contact info is included
+            "phone": member.phone
         }
-        
+
         if member.role == "admin":
             hierarchy["admin"] = member_data
-        elif member.role == "exec":
+        elif member.role in ["president", "vp", "treasurer", "secretary"]:
             hierarchy["execs"].append(member_data)
         else:
             hierarchy["members"].append(member_data)
 
-    return jsonify(hierarchy)
+    return jsonify(hierarchy), 200
