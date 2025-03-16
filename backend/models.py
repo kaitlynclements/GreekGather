@@ -18,6 +18,8 @@ Models:
 - Event: Chapter events and activities
 - EventMonitor: Event participation tracking
 - JoinRequest: Chapter membership requests
+- EventBudget: Event budget management
+- EventExpense: Event expense management
 
 Input Validation:
 - Email format validation
@@ -233,3 +235,21 @@ class RSVP(db.Model):
             "attending": self.attending,
             "guests": self.guests
         }
+
+
+class EventBudget(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    total_budget = db.Column(db.Float, nullable=False)
+    
+    # Relationship to expenses
+    expenses = db.relationship('EventExpense', backref='budget', lazy=True)
+
+
+class EventExpense(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    budget_id = db.Column(db.Integer, db.ForeignKey('event_budget.id'), nullable=False)
+    category = db.Column(db.String(50), nullable=False)  # venue, transportation, food, etc.
+    amount = db.Column(db.Float, nullable=False)
+    description = db.Column(db.String(200))
+    date_added = db.Column(db.DateTime, default=datetime.utcnow)

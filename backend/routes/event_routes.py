@@ -18,7 +18,7 @@ Any known faults: edit event not fully implemented/functioning yet
 
 from flask import Blueprint, request, jsonify
 from database import db
-from models import Event, User, RSVP
+from models import Event, User, RSVP, EventBudget, EventExpense
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_cors import CORS, cross_origin
 
@@ -232,5 +232,82 @@ def get_rsvp_count(event_id):
 
     return jsonify({"event_id": event_id, "total_attendees": total_attendees})
 
-
+@event_routes.route('/event/<int:event_id>/budget', methods=['GET', 'POST'])
+@jwt_required()
+def manage_budget(event_id):
+    user = User.query.get(get_jwt_identity())
+    if user.role not in ['admin', 'exec']:
+        return jsonify({"error": "Unauthorized"}), 403
+        
+    if request.method == 'POST':
+        data = request.json
+        # Check if budget already exists
+        existing_budget = EventBudget.query.filter_by(event_id=event_id).first()
+        
+        if existing_budget:
+            # Update existing budget
+            existing_budget.total_budget = data['total_budget']
+            db.session.commit()
+            
+            # Handle expenses if included
+            if 'expenses' in data:
+                # Clear existing expenses and add new ones
+                EventExpense.query.filter_by(budget_id=existing_budget.id).delete()
+                
+                for expense in data['expenses']:
+                    new_expense = EventExpense(
+                        budget_id=existing_budget.id,
+                        category=expense['category'],
+                        amount=expense['amount'],
+                        description=expense.get('description', '')
+                    )
+                    db.session.add(new_expense)
+                db.session.commit()
+                
+            return jsonify({"message": "Budget updated successfully"})
+        else:
+            # Create new budget
+            budget = EventBudget(
+                event_id=event_id,
+                total_budget=data['total_budget']
+            )
+            db.session.add(budget)
+            db.session.commit()
+            
+            # Add expenses if included
+            if 'expenses' in data:
+                for expense in data['expenses']:
+                    new_expense = EventExpense(
+                        budget_id=budget.id,
+                        category=expense['category'],
+                        amount=expense['amount'],
+                        description=expense.get('description', '')
+                    )
+                    db.session.add(new_expense)
+                db.session.commit()
+                
+            return jsonify({"message": "Budget created successfully"})
+    
+    # GET method
+    budget = EventBudget.query.filter_by(event_id=event_id).first()
+    
+    # If no budget exists yet, return empty budget structure
+    if not budget:
+        return jsonify({
+            "total_budget": 0,
+            "total_spent": 0,
+            "expenses": []
+        })
+    
+    # Otherwise return existing budget with expenses
+    expenses = EventExpense.query.filter_by(budget_id=budget.id).all()
+    return jsonify({
+        "total_budget": budget.total_budget,
+        "total_spent": sum(expense.amount for expense in expenses),
+        "expenses": [{
+            "category": expense.category,
+            "amount": expense.amount,
+            "description": expense.description
+        } for expense in expenses]
+    })
 

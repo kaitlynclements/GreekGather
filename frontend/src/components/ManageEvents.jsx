@@ -19,6 +19,7 @@
 
 import React, { useState, useEffect } from 'react';
 import './ManageEvents.css';
+import Budget from './Budget';
 
 function ManageEvents() {
     const [events, setEvents] = useState([]);
@@ -32,7 +33,12 @@ function ManageEvents() {
         eventType: 'Social'
     });
 
+    const [userRole, setUserRole] = useState(localStorage.getItem('role') || 'guest');
+
     const [isEditing, setIsEditing] = useState(false);
+    const [budgetData, setBudgetData] = useState({});
+    const [showBudgetModal, setShowBudgetModal] = useState(false);
+    const [selectedEventId, setSelectedEventId] = useState(null);
 
     // ✅ Fetch events from the backend
     useEffect(() => {
@@ -196,6 +202,18 @@ function ManageEvents() {
         fetchRsvpCounts();
     }, [events]);
 
+    useEffect(() => {
+        // Update userRole when localStorage changes
+        const handleStorageChange = () => {
+            setUserRole(localStorage.getItem('role') || 'guest');
+        };
+        
+        window.addEventListener('storage', handleStorageChange);
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+        };
+    }, []);
+
     return (
         <div className="manage-events-container">
             <h2>Manage Events</h2>
@@ -219,6 +237,26 @@ function ManageEvents() {
                         <strong>RSVP Count: {event.totalAttendees}</strong>
                         <button onClick={() => handleEdit(event)}>Edit</button>
                         <button onClick={() => handleDelete(event.id)} style={{ color: "red" }}>Delete</button>
+                        {userRole === 'admin' || userRole === 'exec' ? (
+                            <div className="event-budget-section">
+                                <div className="budget-summary">
+                                    <p>Budget: ${event.budget?.total_budget || 0}</p>
+                                    <p>Spent: ${event.budget?.total_spent || 0}</p>
+                                    {event.budget?.total_spent > event.budget?.total_budget && (
+                                        <p className="budget-warning">⚠️ Over Budget</p>
+                                    )}
+                                </div>
+                                <button 
+                                    onClick={() => {
+                                        setSelectedEventId(event.id);
+                                        setShowBudgetModal(true);
+                                    }}
+                                    className="edit-budget-btn"
+                                >
+                                    Edit Budget
+                                </button>
+                            </div>
+                        ) : null}
                     </li>
                     ))}
                     </ul>
@@ -251,6 +289,41 @@ function ManageEvents() {
                         <button onClick={handleSubmit}>{isEditing ? "Update" : "Create"}</button>
                         <button onClick={() => setShowModal(false)}>Cancel</button>
                     </div>
+                </div>
+            )}
+
+            {showBudgetModal && (
+                <div className="modal">
+                    <Budget 
+                        eventId={selectedEventId}
+                        onClose={() => setShowBudgetModal(false)}
+                        onSave={async (budgetData) => {
+                            try {
+                                const response = await fetch(`http://127.0.0.1:5000/event/${selectedEventId}/budget`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                                    },
+                                    body: JSON.stringify(budgetData)
+                                });
+                                
+                                if (response.ok) {
+                                    // Update the events list to reflect the new budget
+                                    const updatedEvents = events.map(event => {
+                                        if (event.id === selectedEventId) {
+                                            return { ...event, budget: budgetData };
+                                        }
+                                        return event;
+                                    });
+                                    setEvents(updatedEvents);
+                                    setShowBudgetModal(false);
+                                }
+                            } catch (error) {
+                                console.error('Error saving budget:', error);
+                            }
+                        }}
+                    />
                 </div>
             )}
         </div>

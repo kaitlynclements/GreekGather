@@ -5,7 +5,8 @@ Sam Muehlebach
 Total Hours: 4 hours
 
 Lizzie Soltis:
-  ...
+  03/15: 1 hour debugging functionality errors
+  03/16: 3.5 hours, implementing Budget functionality
 Total Hours: 
 
 Kaitlyn Clements: 
