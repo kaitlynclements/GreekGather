@@ -1,6 +1,8 @@
 Sam Muehlebach
-  ...
-Total Hours: 
+  3/14: 2 hours implementing contact directory
+  3/15: 1.5 hours addressing errors with contact directory, and creating new contact directory
+  3/16: .5 hours creating search feature
+Total Hours: 4 hours
 
 Lizzie Soltis:
   ...
@@ -21,4 +23,4 @@ Aaditi Chinawalkar:
 Total Hours: 
 
 
-Total Hours for Group: 6
+Total Hours for Group: 10
