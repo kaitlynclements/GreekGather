@@ -7,7 +7,7 @@ Total Hours: 4 hours
 Lizzie Soltis:
   03/15: 1 hour debugging functionality errors
   03/16: 3.5 hours, implementing Budget functionality
-Total Hours: 
+Total Hours: 4.5 hours
 
 Kaitlyn Clements: 
   03/12: 1 Hour, Sprint 4 User Stories and Requirements
