@@ -4,7 +4,7 @@ models.py - Database Models
 This module defines the database schema and models for the GreekGather application,
 implementing the data structure for users, chapters, events, and related entities.
 
-Authors: Elizabeth Soltis, Aaditing Chinawalkar, Taylor Slade, Kaitlyn Clements, Sam Muehlebach
+Authors: Elizabeth Soltis, Aaditi Chinawalkar, Taylor Slade, Kaitlyn Clements, Sam Muehlebach
 Created: 02/02
 
 Preconditions:
