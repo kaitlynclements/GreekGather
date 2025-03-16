@@ -21,6 +21,7 @@ function Chapter() {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         const fetchChapterHierarchy = async () => {
@@ -37,7 +38,7 @@ function Chapter() {
                 }
 
                 const data = await response.json();
-                console.log("DEBUG: Received chapter data", data);  // ✅ Debugging API response
+                console.log("DEBUG: Received chapter data", data); // Debugging
                 setChapterMembers(data);
             } catch (err) {
                 setError(err.message);
@@ -52,46 +53,42 @@ function Chapter() {
     if (loading) return <div>Loading chapter information...</div>;
     if (error) return <div>Error: {error}</div>;
 
+    // Combine all members into a single array for easier searching
+    const allMembers = [];
+    if (chapterMembers.admin) allMembers.push({ ...chapterMembers.admin, role: "admin" });
+    allMembers.push(...chapterMembers.execs.map(exec => ({ ...exec, role: "exec" })));
+    allMembers.push(...chapterMembers.members.map(member => ({ ...member, role: "member" })));
+
+    // Filter members based on search term (name or role)
+    const filteredMembers = allMembers.filter(member =>
+        member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        member.role.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div className="chapter-container">
             <h1>Chapter Hierarchy</h1>
             
+            {/* Search Input */}
+            <input
+                type="text"
+                placeholder="Search by name or role (admin, exec, member)..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-box"
+            />
+
             <div className="org-tree">
-                {/* Admin Level */}
-                {chapterMembers.admin && (
-                    <div className="level admin-level">
-                        <div className="member-card admin">
-                            <h3>{chapterMembers.admin.name}</h3>
-                            <span className="role">Administrator</span>
-                            <p><strong>Email:</strong> {chapterMembers.admin.email || "N/A"}</p>  {/* ✅ Ensure email is displayed */}
+                {filteredMembers.length > 0 ? (
+                    filteredMembers.map(member => (
+                        <div key={member.id} className={`member-card ${member.role}`}>
+                            <h3>{member.name}</h3>
+                            <span className="role">{member.role.charAt(0).toUpperCase() + member.role.slice(1)}</span>
+                            <p><strong>Email:</strong> {member.email || "N/A"}</p>
                         </div>
-                    </div>
-                )}
-
-                {/* Exec Level */}
-                {chapterMembers.execs.length > 0 && (
-                    <div className="level exec-level">
-                        {chapterMembers.execs.map(exec => (
-                            <div key={exec.id} className="member-card exec">
-                                <h3>{exec.name}</h3>
-                                <span className="role">Executive</span>
-                                <p><strong>Email:</strong> {exec.email || "N/A"}</p>  {/* ✅ Ensure email is displayed */}
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                {/* Member Level */}
-                {chapterMembers.members.length > 0 && (
-                    <div className="level member-level">
-                        {chapterMembers.members.map(member => (
-                            <div key={member.id} className="member-card member">
-                                <h3>{member.name}</h3>
-                                <span className="role">Member</span>
-                                <p><strong>Email:</strong> {member.email || "N/A"}</p>  {/* ✅ Ensure email is displayed */}
-                            </div>
-                        ))}
-                    </div>
+                    ))
+                ) : (
+                    <p>No members found.</p>
                 )}
             </div>
         </div>
