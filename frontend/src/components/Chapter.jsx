@@ -26,7 +26,7 @@ function Chapter() {
         const fetchChapterHierarchy = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://127.0.0.1:5000/chapter/hierarchy', {
+                const response = await fetch('http://127.0.0.1:5000/auth/chapter/hierarchy', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -37,6 +37,7 @@ function Chapter() {
                 }
 
                 const data = await response.json();
+                console.log("DEBUG: Received chapter data", data);  // ✅ Debugging API response
                 setChapterMembers(data);
             } catch (err) {
                 setError(err.message);
@@ -62,6 +63,7 @@ function Chapter() {
                         <div className="member-card admin">
                             <h3>{chapterMembers.admin.name}</h3>
                             <span className="role">Administrator</span>
+                            <p><strong>Email:</strong> {chapterMembers.admin.email || "N/A"}</p>  {/* ✅ Ensure email is displayed */}
                         </div>
                     </div>
                 )}
@@ -73,6 +75,7 @@ function Chapter() {
                             <div key={exec.id} className="member-card exec">
                                 <h3>{exec.name}</h3>
                                 <span className="role">Executive</span>
+                                <p><strong>Email:</strong> {exec.email || "N/A"}</p>  {/* ✅ Ensure email is displayed */}
                             </div>
                         ))}
                     </div>
@@ -85,6 +88,7 @@ function Chapter() {
                             <div key={member.id} className="member-card member">
                                 <h3>{member.name}</h3>
                                 <span className="role">Member</span>
+                                <p><strong>Email:</strong> {member.email || "N/A"}</p>  {/* ✅ Ensure email is displayed */}
                             </div>
                         ))}
                     </div>

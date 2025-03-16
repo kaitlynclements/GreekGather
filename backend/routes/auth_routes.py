@@ -417,3 +417,49 @@ def assign_user_role():
     db.session.commit()
 
     return jsonify({"message": f"{user.name} is now assigned the role of {new_role}."})
+
+@auth_routes.route("/chapter/hierarchy", methods=["GET"])
+@jwt_required()
+def get_chapter_hierarchy():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if not user or not user.chapter_id:
+        return jsonify({"error": "User is not associated with any chapter"}), 400
+
+    # Fetch all members in the chapter
+    members = User.query.filter_by(chapter_id=user.chapter_id).all()
+
+    # Sort members into roles
+    admin = next((m for m in members if m.role == "admin"), None)
+    execs = [m for m in members if m.role == "exec"]
+    members = [m for m in members if m.role == "member"]
+
+    # Convert to JSON format with a fallback for email
+    chapter_data = {
+        "admin": {
+            "id": admin.id,
+            "name": admin.name,
+            "email": admin.email if admin and admin.email else "No email provided",  # ✅ Default email
+            "phone": getattr(admin, 'phone', "N/A"),
+        } if admin else None,
+        "execs": [
+            {
+                "id": exec.id,
+                "name": exec.name,
+                "email": exec.email if exec.email else "No email provided",  # ✅ Default email
+                "phone": getattr(exec, 'phone', "N/A"),
+            } for exec in execs
+        ],
+        "members": [
+            {
+                "id": member.id,
+                "name": member.name,
+                "email": member.email if member.email else "No email provided",  # ✅ Default email
+                "phone": getattr(member, 'phone', "N/A"),
+            } for member in members
+        ]
+    }
+
+    print("DEBUG: Returning chapter hierarchy:", chapter_data)  # ✅ Debugging
+    return jsonify(chapter_data)
