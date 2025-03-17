@@ -19,11 +19,12 @@ Total Hours: 7.5
 
 Taylor Slade:
   03/13: 2 hours, added delete event button and restructuring event calendar for better organization, added an RSVP button and RSVP count but still needs some debugging
-Total Hours: 2
+  03/16: 1 hours testing requirements and working on sprint 4 artifacts
+Total Hours: 3
 
 Aaditi Chinawalkar: 
   ...
 Total Hours: 
 
 
-Total Hours for Group: 18
+Total Hours for Group: 19
