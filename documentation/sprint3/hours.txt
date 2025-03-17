@@ -14,7 +14,8 @@ Kaitlyn Clements:
   03/12: 1 Hour, Updating Event Calendar to display event descriptions and categories for users to view.
   03/15: 2 Hours, Fixing bugs caused after contact directory features changes with routes. 
   03/15: 3 Hours, Trying to implement Event Budget, setting up databases and relationships in Models.py, attempting routes, and trying out frontend changes
-Total Hours: 7
+  03/16: .5 Hour writing user artifacts document
+Total Hours: 7.5
 
 Taylor Slade:
   03/13: 2 hours, added delete event button and restructuring event calendar for better organization, added an RSVP button and RSVP count but still needs some debugging
@@ -25,4 +26,4 @@ Aaditi Chinawalkar:
 Total Hours: 
 
 
-Total Hours for Group: 17.5
+Total Hours for Group: 18
