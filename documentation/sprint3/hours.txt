@@ -13,7 +13,8 @@ Kaitlyn Clements:
   03/12: 1 Hour, Sprint 4 User Stories and Requirements
   03/12: 1 Hour, Updating Event Calendar to display event descriptions and categories for users to view.
   03/15: 2 Hours, Fixing bugs caused after contact directory features changes with routes. 
-Total Hours: 4
+  03/15: 3 Hours, Trying to implement Event Budget, setting up databases and relationships in Models.py, attempting routes, and trying out frontend changes
+Total Hours: 7
 
 Taylor Slade:
   03/13: 2 hours, added delete event button and restructuring event calendar for better organization, added an RSVP button and RSVP count but still needs some debugging
@@ -24,4 +25,4 @@ Aaditi Chinawalkar:
 Total Hours: 
 
 
-Total Hours for Group: 10
+Total Hours for Group: 17.5
