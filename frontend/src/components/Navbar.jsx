@@ -91,7 +91,7 @@ function Navbar() {
                         )}
 
                         <li className="profile-section">
-                            <span>👤 {username || "Profile"}</span>
+                            <Link to="/profile">👤 {username || "Profile"}</Link>
                         </li>
 
                         <li>

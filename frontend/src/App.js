@@ -31,6 +31,7 @@ import RequestDashboard from "./components/RequestDashboard";
 import './App.css'; 
 import ManageRoles from "./components/ManageRoles";
 import Chapter from "./components/Chapter";
+import Profile from './components/Profile'
 
 function App() {
     const [userRole, setUserRole] = useState(null); // Start as null
@@ -63,6 +64,7 @@ function App() {
                         path="/manage-roles" 
                         element={userRole === "admin" ? <ManageRoles /> : <Navigate to="/" />}
                     />
+                    <Route path="/profile" element={<Profile />}/>
                 </Routes>
             </div>
         </Router>
