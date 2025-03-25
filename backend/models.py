@@ -253,3 +253,27 @@ class EventExpense(db.Model):
     amount = db.Column(db.Float, nullable=False)
     description = db.Column(db.String(200))
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
+
+class StudySession(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False)
+    description = db.Column(db.Text)
+    duration_hours = db.Column(db.Float) 
+
+    user = db.relationship("User", backref="study_sessions")
+
+class ServiceHour(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    time = db.Column(db.Time, nullable=False)
+    duration_hours = db.Column(db.Float, nullable=False)
+    description = db.Column(db.String(255), nullable=False)
+    verified = db.Column(db.Boolean, default=False)
+
+    user = db.relationship("User", backref="service_hours")
+
+
+

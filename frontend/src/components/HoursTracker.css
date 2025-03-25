@@ -1,0 +1,53 @@
+.study-hours-container {
+    padding: 20px;
+    max-width: 700px;
+    margin: auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.study-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.study-form input,
+.study-form textarea,
+.study-form select,
+.study-form button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.study-form button {
+    background-color: #0077cc;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.study-form button:hover {
+    background-color: #005fa3;
+}
+
+.filter {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.session-list {
+    margin-top: 10px;
+}
+
+.session-entry {
+    background: #f8f8f8;
+    border-left: 4px solid #0077cc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+}

@@ -32,6 +32,7 @@ import './App.css';
 import ManageRoles from "./components/ManageRoles";
 import Chapter from "./components/Chapter";
 import Profile from './components/Profile'
+import HoursTracker from './components/HoursTracker';
 
 function App() {
     const [userRole, setUserRole] = useState(null); // Start as null
@@ -54,6 +55,7 @@ function App() {
                     <Route path="/chapter" element={<Chapter />} />
                     <Route path="/create_chapter" element={<CreateChapter />} />
                     <Route path="/join_chapter" element={<JoinChapter />} />
+                    <Route path="/track-hours" element={<HoursTracker />} />
                     <Route path="/assign_role" element={userRole === 'admin' ? <AssignRole /> : <Navigate to="/" />} />
                     <Route path="/manage-events" element={(userRole === 'exec' || userRole === 'admin') ? <ManageEvents /> : <Navigate to="/" />} />
                     <Route 

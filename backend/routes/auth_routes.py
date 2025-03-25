@@ -18,9 +18,10 @@ Any known faults: none
 
 from flask import Blueprint, request, jsonify
 from database import db
-from models import User, Chapter, JoinRequest
+from models import User, Chapter, JoinRequest, StudySession, ServiceHour
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import re
+from datetime import datetime, timedelta
 from flask_cors import CORS
 
 auth_routes = Blueprint("auth", __name__)
@@ -440,14 +441,14 @@ def get_chapter_hierarchy():
         "admin": {
             "id": admin.id,
             "name": admin.name,
-            "email": admin.email if admin and admin.email else "No email provided",  # ✅ Default email
+            "email": admin.email if admin and admin.email else "No email provided",  
             "phone": getattr(admin, 'phone', "N/A"),
         } if admin else None,
         "execs": [
             {
                 "id": exec.id,
                 "name": exec.name,
-                "email": exec.email if exec.email else "No email provided",  # ✅ Default email
+                "email": exec.email if exec.email else "No email provided",  
                 "phone": getattr(exec, 'phone', "N/A"),
             } for exec in execs
         ],
@@ -455,11 +456,233 @@ def get_chapter_hierarchy():
             {
                 "id": member.id,
                 "name": member.name,
-                "email": member.email if member.email else "No email provided",  # ✅ Default email
+                "email": member.email if member.email else "No email provided",  
                 "phone": getattr(member, 'phone', "N/A"),
             } for member in members
         ]
     }
 
-    print("DEBUG: Returning chapter hierarchy:", chapter_data)  # ✅ Debugging
+    print("DEBUG: Returning chapter hierarchy:", chapter_data)  
     return jsonify(chapter_data)
+
+@auth_routes.route("/study_sessions", methods=["OPTIONS"])
+def preflight_study_sessions():
+    response = jsonify({"message": "Preflight OK"})
+    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    response.headers.add("Access-Control-Allow-Credentials", "true")
+    return response, 200
+
+
+@auth_routes.route("/study_sessions", methods=["POST"])
+@jwt_required()
+def log_study_session():
+    user_id = get_jwt_identity()
+    data = request.json
+
+    try:
+        print("DEBUG - raw incoming study session payload:", data)
+        start_time = datetime.fromisoformat(data["start_time"])
+        end_time = datetime.fromisoformat(data["end_time"])
+    except Exception as e:
+        print("❌ DEBUG - datetime parsing failed:", str(e))
+        return jsonify({"error": "Invalid datetime format"}), 400
+
+    if end_time <= start_time:
+        return jsonify({"error": "End time must be after start time"}), 400
+
+    duration = (end_time - start_time).total_seconds() / 3600.0
+
+    session = StudySession(
+        user_id=user_id,
+        start_time=start_time,
+        end_time=end_time,
+        description=data.get("description", ""),
+        duration_hours=round(duration, 2)
+    )
+
+    db.session.add(session)
+    db.session.commit()
+
+    response = jsonify({
+        "message": "Study session logged successfully",
+        "duration_hours": round(duration, 2)
+    })
+    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    response.headers.add("Access-Control-Allow-Credentials", "true")
+    return response, 201
+
+
+@auth_routes.route("/study_summary", methods=["GET"])
+@jwt_required()
+def get_study_summary():
+    user_id = get_jwt_identity()
+    period = request.args.get("period", "week")
+
+    now = datetime.now()
+
+    if period == "month":
+        start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        if start.month == 12:
+            end = start.replace(year=start.year + 1, month=1)
+        else:
+            end = start.replace(month=start.month + 1)
+    else:  
+        start = (now - timedelta(days=now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0)
+        end = start + timedelta(days=7)
+
+    sessions = StudySession.query.filter(
+        StudySession.user_id == user_id,
+        StudySession.start_time >= start,
+        StudySession.start_time < end
+    ).all()
+
+    total = sum(s.duration_hours for s in sessions)
+
+    return jsonify({
+        "total_hours": round(total, 2),
+        "period": period,
+        "sessions": [
+            {
+                "id": s.id,
+                "start_time": s.start_time.isoformat(),
+                "end_time": s.end_time.isoformat(),
+                "duration": s.duration_hours,
+                "description": s.description
+            }
+            for s in sessions
+        ]
+    })
+
+@auth_routes.route("/service_sessions", methods=["OPTIONS"])
+def preflight_service_sessions():
+    response = jsonify({"message": "Preflight OK"})
+    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    response.headers.add("Access-Control-Allow-Credentials", "true")
+    return response, 200
+
+@auth_routes.route("/service_sessions", methods=["POST"])
+@jwt_required()
+def log_service_session():
+    data = request.json
+    user_id = get_jwt_identity()
+
+    try:
+        date = datetime.strptime(data["date"], "%Y-%m-%d").date()
+        time = datetime.strptime(data["time"], "%H:%M").time()
+        duration = float(data["duration_hours"])
+    except Exception:
+        return jsonify({"error": "Invalid input"}), 400
+
+    new_entry = ServiceHour(
+        user_id=user_id,
+        date=date,
+        time=time,
+        duration_hours=duration,
+        description=data["description"],
+    )
+
+    db.session.add(new_entry)
+    db.session.commit()
+
+    response = jsonify({"message": "Service hours submitted for approval"})
+    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    response.headers.add("Access-Control-Allow-Credentials", "true")
+    return response, 201
+
+
+@auth_routes.route("/my_service_hours", methods=["GET"])
+@jwt_required()
+def get_my_service_hours():
+    user_id = get_jwt_identity()
+    entries = ServiceHour.query.filter_by(user_id=user_id).all()
+
+    return jsonify([
+        {
+            "id": e.id,
+            "date": e.date.isoformat(),
+            "time": e.time.strftime("%H:%M"),
+            "duration_hours": e.duration_hours,
+            "description": e.description,
+            "verified": e.verified
+        }
+        for e in entries
+    ])
+
+
+@auth_routes.route("/pending_service_hours", methods=["GET"])
+@jwt_required()
+def get_pending_service_hours():
+    user = User.query.get(get_jwt_identity())
+    if user.role not in ["admin", "exec"]:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    pending = ServiceHour.query.filter_by(verified=False).all()
+    return jsonify([
+        {
+            "id": e.id,
+            "user_name": e.user.name,
+            "description": e.description,
+            "date": e.date.isoformat(),
+            "time": e.time.strftime("%H:%M"),
+            "duration_hours": e.duration_hours
+        }
+        for e in pending
+    ])
+
+@auth_routes.route("/verify_service_hour/<int:id>", methods=["POST"])
+@jwt_required()
+def verify_service_hour(id):
+    user = User.query.get(get_jwt_identity())
+    if user.role not in ["admin", "exec"]:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    entry = ServiceHour.query.get(id)
+    if not entry:
+        return jsonify({"error": "Entry not found"}), 404
+
+    entry.verified = True
+    db.session.commit()
+
+    response = jsonify({"message": "Service hour verified"})
+    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    response.headers.add("Access-Control-Allow-Credentials", "true")
+    return response, 200
+
+@auth_routes.route("/service_summary", methods=["GET"])
+@jwt_required()
+def get_service_summary():
+    user_id = get_jwt_identity()
+    period = request.args.get("period", "week")
+
+    now = datetime.utcnow()
+    if period == "month":
+        start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    else:  # default to week
+        start = (now - timedelta(days=now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0)
+
+    sessions = ServiceHour.query.filter(
+        ServiceHour.user_id == user_id,
+        ServiceHour.date >= start.date()
+    ).all()
+
+    return jsonify({
+        "total_hours": round(sum(s.duration_hours for s in sessions), 2),
+        "period": period,
+        "sessions": [
+            {
+                "id": s.id,
+                "start_time": f"{s.date.isoformat()}T{s.time.strftime('%H:%M:%S')}",
+                "end_time": "",  # optional or placeholder
+                "duration": s.duration_hours,
+                "description": s.description,
+                "verified": s.verified
+            } for s in sessions
+        ]
+    })
+
+
+
