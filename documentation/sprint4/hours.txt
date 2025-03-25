@@ -1,6 +1,6 @@
 Sam Muehlebach
-  ...
-Total Hours: 0 
+  3/25: 2 hours- implementing Service and Study hour tracking backend routes, and frontend functionality
+Total Hours: 2
 
 Lizzie Soltis:
   ...
