@@ -9,7 +9,8 @@ Total Hours: 0
 Kaitlyn Clements: 
   03/24: 2 hours- trying to create update profile, but having bugs with backend routes interfering with other functionality
   03/25: 2 hours- Completed frontend for profile component so that users can update their profile information. Updated Navbar.jsx, App.js, & created Profile.jsx, Profile.css, user_routes.py. Backend routes still need to be completed in user_routes.py. 
-Total Hours: 4
+  03/26: .5 hours- Creating requirement artifacts and writing user stories for sprint 5
+Total Hours: 4.5
 
 Taylor Slade:
   ...
@@ -20,4 +21,4 @@ Aaditi Chinawalkar:
 Total Hours: 0
 
 
-Total Hours for Group: 0
+Total Hours for Group: 6.5
