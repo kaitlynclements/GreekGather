@@ -14,11 +14,12 @@ Total Hours: 4.5
 
 Taylor Slade:
   03/26: 1.5 hours resolving frontend display errors from sprint 3, linked events to specific chapters and began work on public/private event calendar
-Total Hours: 1.5
+  03/27: 1.5 hours finishing and testing public/private event calendar requirement, ensuring all other functionalities remain intact
+Total Hours: 3
 
 Aaditi Chinawalkar: 
   ...
 Total Hours: 0
 
 
-Total Hours for Group: 8
+Total Hours for Group: 9.5
