@@ -30,7 +30,9 @@ function ManageEvents() {
         description: '',
         date: '',
         location: '',
-        eventType: 'Social'
+        eventType: 'Social',
+        visibility: 'Public'
+
     });
 
     const [userRole, setUserRole] = useState(localStorage.getItem('role') || 'guest');
@@ -39,6 +41,7 @@ function ManageEvents() {
     const [budgetData, setBudgetData] = useState({});
     const [showBudgetModal, setShowBudgetModal] = useState(false);
     const [selectedEventId, setSelectedEventId] = useState(null);
+    const [rsvpCounts, setRsvpCounts] = useState({});
 
     // ✅ Fetch events from the backend
     useEffect(() => {
@@ -87,16 +90,17 @@ function ManageEvents() {
                 )
             );
     
-            const updatedEvents = events.map((event, index) => ({
-                ...event,
-                totalAttendees: responses[index].total_attendees || 0
-            }));
+            const counts = {};
+            responses.forEach(res => {
+                counts[res.event_id] = res.total_attendees || 0;
+            });
     
-            setEvents(updatedEvents);
+            setRsvpCounts(counts);
         } catch (error) {
             console.error("Error fetching RSVP counts:", error);
         }
     };
+    
 
     // ✅ Handle form input changes
     const handleInputChange = (e) => {
@@ -199,8 +203,11 @@ function ManageEvents() {
     };
 
     useEffect(() => {
-        fetchRsvpCounts();
-    }, [events]);
+        if (events.length > 0) {
+            fetchRsvpCounts();
+        }
+    }, [events.length]);  // Trigger only when the number of events changes
+    
 
     useEffect(() => {
         // Update userRole when localStorage changes
@@ -234,7 +241,7 @@ function ManageEvents() {
                         <br />
                         <small>{new Date(event.date).toLocaleString()} | {event.location}</small>
                         <br />
-                        <strong>RSVP Count: {event.totalAttendees}</strong>
+                        <strong>RSVP Count: {rsvpCounts[event.id] || 0}</strong>
                         <button onClick={() => handleEdit(event)}>Edit</button>
                         <button onClick={() => handleDelete(event.id)} style={{ color: "red" }}>Delete</button>
                         {userRole === 'admin' || userRole === 'exec' ? (
@@ -284,6 +291,12 @@ function ManageEvents() {
                             <option value="Social">Social</option>
                             <option value="Service">Service</option>
                             <option value="Academics">Academics</option>
+                        </select>
+
+                        <label>Visibility</label>
+                        <select name="visibility" value={newEvent.visibility} onChange={handleInputChange}>
+                            <option value="Public">Public</option>
+                            <option value="Private">Private</option>
                         </select>
 
                         <button onClick={handleSubmit}>{isEditing ? "Update" : "Create"}</button>

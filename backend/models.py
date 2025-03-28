@@ -143,7 +143,7 @@ class User(db.Model):
 class Event(db.Model):
     """
     Event model representing chapter events and activities.
-    
+
     Attributes:
         id (Integer): Primary key
         name (String): Event name
@@ -151,9 +151,10 @@ class Event(db.Model):
         date (String): Event date
         location (String): Event location
         eventType (String): Type of event (Social, Service, Academics, etc.)
-        
+        budget (Relationship): One-to-one relationship to EventBudget
+
     Methods:
-        to_dict: Converts event to dictionary for API responses
+        to_dict: Converts event to dictionary including budget info for API responses
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -161,22 +162,42 @@ class Event(db.Model):
     date = db.Column(db.String(50), nullable=False)
     location = db.Column(db.String(150), nullable=False)
     eventType = db.Column(db.String(50), nullable=False)  # Social, Service, Academics, etc.
+    chapter_id = db.Column(db.Integer, db.ForeignKey('chapter.id'), nullable=True)
+    visibility = db.Column(db.String(10), default='Public')  # 'Public' or 'Private'
+
+    #  Relationship to budget
+    budget = db.relationship('EventBudget', backref='event', uselist=False, cascade="all, delete-orphan")
 
     def to_dict(self):
         """
-        Convert event to dictionary format
-        
+        Convert event to dictionary format with budget summary
+
         Returns:
-            dict: Event data in dictionary format for JSON serialization
+            dict: Event data for JSON serialization, including budget
         """
+        budget_info = {
+            "total_budget": 0,
+            "total_spent": 0
+        }
+
+        if self.budget:
+            total_spent = sum(exp.amount for exp in self.budget.expenses)
+            budget_info = {
+                "total_budget": self.budget.total_budget,
+                "total_spent": total_spent
+            }
+
         return {
             "id": self.id,
             "name": self.name,
             "description": self.description,
             "date": self.date,
             "location": self.location,
-            "eventType": self.eventType
+            "eventType": self.eventType,
+            "budget": budget_info,
+            "visibility": self.visibility,
         }
+
 
 
 class EventMonitor(db.Model):

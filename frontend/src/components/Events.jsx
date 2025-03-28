@@ -157,6 +157,10 @@ function Events() {
                                 <br />
                                 <small>📍 {event.location}</small>
                                 <br />
+                                <small>
+                                    {event.visibility === "Private" ? "🔒 Private" : "🌍 Public"}
+                                </small>
+                                <br />
                                 <button onClick={() => openRsvpPopup(event)}>RSVP</button>
                             </li>
                         ))}

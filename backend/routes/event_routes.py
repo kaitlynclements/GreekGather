@@ -21,6 +21,7 @@ from database import db
 from models import Event, User, RSVP, EventBudget, EventExpense
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_cors import CORS, cross_origin
+from sqlalchemy import or_, and_
 
 event_routes = Blueprint("event_routes", __name__)
 
@@ -42,7 +43,14 @@ def get_events():
     if not user:
         return jsonify({"error": "User not found"}), 403
 
-    events = Event.query.all()
+    from sqlalchemy import or_
+    
+    events = Event.query.filter(
+        or_(
+            Event.visibility == "Public",
+            Event.chapter_id == user.chapter_id
+        )
+    ).all()
 
     response = jsonify({"events": [event.to_dict() for event in events]})
     response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -69,6 +77,10 @@ def create_event():
 
     # Find the user
     user = User.query.get(user_id)
+
+    if not user or not user.chapter_id:
+        return jsonify({'error': 'Invalid user or missing chapter'}), 400
+    
     if not user or user.role not in ["exec", "admin"]:
         return jsonify({"error": "Only Vice Presidents and Admins can create events"}), 403
 
@@ -77,7 +89,7 @@ def create_event():
         #return jsonify({"error": "User is not associated with any chapter"}), 400
 
     # Ensure all fields are present
-    required_fields = ["name", "description", "date", "location", "eventType"]
+    required_fields = ["name", "description", "date", "location", "eventType", "visibility"]
     for field in required_fields:
         if field not in data:
             return jsonify({"error": f"Missing field: {field}"}), 400
@@ -89,6 +101,8 @@ def create_event():
         date=data["date"],
         location=data["location"],
         eventType=data["eventType"],
+        visibility=data["visibility"],
+        chapter_id=user.chapter_id
     )
     db.session.add(new_event)
     db.session.commit()
@@ -142,6 +156,7 @@ def edit_event(event_id):
     event.date = data["date"]
     event.location = data["location"]
     event.eventType = data["eventType"]
+    event.visibility = data["visibility"]
 
     db.session.commit()
 
@@ -152,6 +167,15 @@ def edit_event(event_id):
     return response, 200
 
 
+@event_routes.route("/delete_event/<int:event_id>", methods=["OPTIONS"])
+@cross_origin()
+def preflight_delete_event(event_id):
+    response = jsonify({"message": "Preflight request successful"})
+    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    response.headers.add("Access-Control-Allow-Methods", "DELETE, OPTIONS")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    response.headers.add("Access-Control-Allow-Credentials", "true")
+    return response, 200
 @event_routes.route("/delete_event/<int:event_id>", methods=["DELETE"])
 @jwt_required()
 def delete_event(event_id):
@@ -185,7 +209,13 @@ def get_events_by_date(date):
     if not user:
         return jsonify({"error": "User not found"}), 403
 
-    events = Event.query.filter(Event.date.startswith(date)).all()
+    events = Event.query.filter(
+        Event.date.startswith(date),
+        or_(
+            Event.visibility == "Public",
+            Event.chapter_id == user.chapter_id
+        )
+    ).all()
 
     response = jsonify({"events": [event.to_dict() for event in events]})
     response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
