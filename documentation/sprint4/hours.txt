@@ -18,8 +18,9 @@ Taylor Slade:
 Total Hours: 3
 
 Aaditi Chinawalkar: 
-  ...
-Total Hours: 0
+  03/27: 1 hour attempting to add admin approval for service and study hours 
+  03/28: 2.5 hours resolving admin approval of hours and allowing members to see what hours were approved.
+Total Hours: 3.5
 
 
-Total Hours for Group: 9.5
+Total Hours for Group: 13

@@ -45,9 +45,40 @@
 }
 
 .session-entry {
-    background: #f8f8f8;
-    border-left: 4px solid #0077cc;
-    padding: 10px;
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.session-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 10px;
-    border-radius: 6px;
+}
+
+.verification-badge {
+    background-color: #4CAF50;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.session-details {
+    margin-top: 8px;
+}
+
+.session-details p {
+    margin: 5px 0;
+}
+
+.session-date {
+    font-weight: bold;
+    color: #666;
 }

@@ -33,6 +33,7 @@ import ManageRoles from "./components/ManageRoles";
 import Chapter from "./components/Chapter";
 import Profile from './components/Profile'
 import HoursTracker from './components/HoursTracker';
+import ManageHours from './components/ManageHours';
 
 function App() {
     const [userRole, setUserRole] = useState(null); // Start as null
@@ -67,6 +68,10 @@ function App() {
                         element={userRole === "admin" ? <ManageRoles /> : <Navigate to="/" />}
                     />
                     <Route path="/profile" element={<Profile />}/>
+                    <Route 
+                        path="/manage-hours" 
+                        element={(userRole === 'exec' || userRole === 'admin') ? <ManageHours /> : <Navigate to="/" />}
+                    />
                 </Routes>
             </div>
         </Router>

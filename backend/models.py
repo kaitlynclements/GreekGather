@@ -287,14 +287,17 @@ class StudySession(db.Model):
 
 class ServiceHour(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    description = db.Column(db.String(500), nullable=False)
     date = db.Column(db.Date, nullable=False)
     time = db.Column(db.Time, nullable=False)
     duration_hours = db.Column(db.Float, nullable=False)
-    description = db.Column(db.String(255), nullable=False)
     verified = db.Column(db.Boolean, default=False)
+    verified_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    verified_at = db.Column(db.DateTime, nullable=True)
 
-    user = db.relationship("User", backref="service_hours")
+    user = db.relationship('User', foreign_keys=[user_id], backref='service_hours')
+    verifier = db.relationship('User', foreign_keys=[verified_by], backref='verified_hours')
 
 
 

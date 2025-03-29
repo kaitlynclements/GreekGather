@@ -571,27 +571,37 @@ def log_service_session():
     user_id = get_jwt_identity()
 
     try:
+        # Parse the date and time from the request
         date = datetime.strptime(data["date"], "%Y-%m-%d").date()
         time = datetime.strptime(data["time"], "%H:%M").time()
         duration = float(data["duration_hours"])
-    except Exception:
-        return jsonify({"error": "Invalid input"}), 400
 
-    new_entry = ServiceHour(
-        user_id=user_id,
-        date=date,
-        time=time,
-        duration_hours=duration,
-        description=data["description"],
-    )
+        # Create new service hour entry
+        new_entry = ServiceHour(
+            user_id=user_id,
+            date=date,
+            time=time,
+            duration_hours=duration,
+            description=data["description"],
+            verified=False,  # Start as unverified
+            verified_by=None,  # No verifier yet
+            verified_at=None   # No verification time yet
+        )
 
-    db.session.add(new_entry)
-    db.session.commit()
+        db.session.add(new_entry)
+        db.session.commit()
 
-    response = jsonify({"message": "Service hours submitted for approval"})
-    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
-    response.headers.add("Access-Control-Allow-Credentials", "true")
-    return response, 201
+        return jsonify({
+            "message": "Service hours submitted successfully",
+            "id": new_entry.id
+        }), 201
+
+    except (ValueError, KeyError) as e:
+        return jsonify({"error": f"Invalid input: {str(e)}"}), 400
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error logging service hours: {str(e)}")
+        return jsonify({"error": "Failed to log service hours"}), 500
 
 
 @auth_routes.route("/my_service_hours", methods=["GET"])
@@ -616,41 +626,69 @@ def get_my_service_hours():
 @auth_routes.route("/pending_service_hours", methods=["GET"])
 @jwt_required()
 def get_pending_service_hours():
-    user = User.query.get(get_jwt_identity())
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    # Check if user is admin or exec
     if user.role not in ["admin", "exec"]:
-        return jsonify({"error": "Unauthorized"}), 403
+        return jsonify({"error": "Unauthorized. Only admins and execs can view pending hours"}), 403
 
-    pending = ServiceHour.query.filter_by(verified=False).all()
-    return jsonify([
-        {
-            "id": e.id,
-            "user_name": e.user.name,
-            "description": e.description,
-            "date": e.date.isoformat(),
-            "time": e.time.strftime("%H:%M"),
-            "duration_hours": e.duration_hours
-        }
-        for e in pending
-    ])
+    # Get all unverified service hours from the same chapter
+    pending_hours = (ServiceHour.query
+        .join(User, ServiceHour.user_id == User.id)  # Explicitly specify the join condition
+        .filter(
+            ServiceHour.verified == False,
+            User.chapter_id == user.chapter_id
+        ).all())
 
-@auth_routes.route("/verify_service_hour/<int:id>", methods=["POST"])
+    # Format the response
+    hours_list = [{
+        "id": hour.id,
+        "user_name": hour.user.name,
+        "date": hour.date.isoformat(),
+        "time": hour.time.strftime("%H:%M"),
+        "duration_hours": hour.duration_hours,
+        "description": hour.description
+    } for hour in pending_hours]
+
+    return jsonify(hours_list)
+
+@auth_routes.route("/approve_service_hours/<int:hours_id>", methods=["POST"])
 @jwt_required()
-def verify_service_hour(id):
-    user = User.query.get(get_jwt_identity())
-    if user.role not in ["admin", "exec"]:
-        return jsonify({"error": "Unauthorized"}), 403
+def approve_service_hours(hours_id):
+    try:
+        # Get the approver (admin/exec)
+        approver = User.query.get(get_jwt_identity())
+        
+        # Check if user has appropriate role
+        if approver.role not in ["admin", "exec"]:
+            return jsonify({"error": "Unauthorized. Only admins and execs can approve hours"}), 403
 
-    entry = ServiceHour.query.get(id)
-    if not entry:
-        return jsonify({"error": "Entry not found"}), 404
+        # Get the service hours entry
+        service_hours = ServiceHour.query.get(hours_id)
+        if not service_hours:
+            return jsonify({"error": "Service hours entry not found"}), 404
 
-    entry.verified = True
-    db.session.commit()
+        # Verify the approver is from the same chapter as the user submitting hours
+        if approver.chapter_id != service_hours.user.chapter_id:
+            return jsonify({"error": "Cannot approve hours for users from different chapters"}), 403
 
-    response = jsonify({"message": "Service hour verified"})
-    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
-    response.headers.add("Access-Control-Allow-Credentials", "true")
-    return response, 200
+        # Approve the hours
+        service_hours.verified = True
+        service_hours.verified_by = approver.id
+        service_hours.verified_at = datetime.utcnow()
+        
+        db.session.commit()
+
+        return jsonify({
+            "message": "Service hours approved successfully",
+            "hours_id": hours_id
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error approving service hours: {str(e)}")
+        return jsonify({"error": "Failed to approve service hours"}), 500
 
 @auth_routes.route("/service_summary", methods=["GET"])
 @jwt_required()
@@ -679,7 +717,8 @@ def get_service_summary():
                 "end_time": "",  # optional or placeholder
                 "duration": s.duration_hours,
                 "description": s.description,
-                "verified": s.verified
+                "verified": s.verified,
+                "verified_at": s.verified_at.isoformat() if s.verified_at else None
             } for s in sessions
         ]
     })

@@ -6,7 +6,7 @@ function HoursTracker() {
     const navigate = useNavigate(); 
     const [studySessions, setStudySessions] = useState([]);
     const [serviceSessions, setServiceSessions] = useState([]);
-    const [form, setForm] = useState({ start_time: '', end_time: '', description: '', type: 'study' });
+    const [form, setForm] = useState({ start_time: '', end_time: '', description: '', type: 'study', duration: '' });
     const [period, setPeriod] = useState('week');
 
     const token = localStorage.getItem("token");
@@ -61,26 +61,24 @@ function HoursTracker() {
 
         let payload;
 
-        if (isService) {
-            const start = new Date(form.start_time);
-            const end = new Date(form.end_time);
-            const duration = (end - start) / 3600000;
-
-            payload = {
-                date: start.toISOString().split("T")[0],          
-                time: start.toTimeString().slice(0, 5),           
-                duration_hours: duration,
-                description: form.description
-            };
-        } else {
-            payload = {
-                start_time: form.start_time,
-                end_time: form.end_time,
-                description: form.description
-            };
-        }
-
         try {
+            if (isService) {
+                const start = new Date(form.start_time);
+                
+                payload = {
+                    date: start.toISOString().split("T")[0],          
+                    time: start.toTimeString().slice(0, 5),           
+                    duration_hours: parseFloat(form.duration) || 0,
+                    description: form.description
+                };
+            } else {
+                payload = {
+                    start_time: form.start_time,
+                    end_time: form.end_time,
+                    description: form.description
+                };
+            }
+
             const response = await fetch(`http://127.0.0.1:5000/auth/${endpoint}`, {
                 method: "POST",
                 headers: {
@@ -90,13 +88,20 @@ function HoursTracker() {
                 body: JSON.stringify(payload)
             });
 
-            if (!response.ok) throw new Error("Failed to log session");
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Failed to log session");
+            }
 
             await fetchStudySessions();
             await fetchServiceSessions();
-            setForm({ start_time: '', end_time: '', description: '', type: 'study' });
+            
+            setForm({ start_time: '', end_time: '', description: '', type: 'study', duration: '' });
+            
+            alert("Hours submitted successfully!");
         } catch (err) {
             console.error("Error submitting session:", err);
+            alert(err.message);
         }
     };
 
@@ -121,6 +126,23 @@ function HoursTracker() {
         );
     };
 
+    const ServiceHourEntry = ({ session }) => (
+        <div className="session-entry">
+            <div className="session-header">
+                <span className="session-date">{new Date(session.start_time).toLocaleDateString()}</span>
+                {session.verified && (
+                    <span className="verification-badge">
+                        ✓ Approved
+                    </span>
+                )}
+            </div>
+            <div className="session-details">
+                <p><strong>Duration:</strong> {session.duration} hours</p>
+                <p><strong>Description:</strong> {session.description}</p>
+            </div>
+        </div>
+    );
+
     return (
         <div className="study-hours-container">
             <h2>Study & Service Hour Tracker</h2>
@@ -132,11 +154,21 @@ function HoursTracker() {
                     <option value="service">Service</option>
                 </select>
 
-                <label>Start Time</label>
-                <input type="datetime-local" name="start_time" value={form.start_time} onChange={handleInputChange} required />
-
-                <label>End Time</label>
-                <input type="datetime-local" name="end_time" value={form.end_time} onChange={handleInputChange} required />
+                {form.type === 'service' ? (
+                    <>
+                        <label>Start Time</label>
+                        <input type="datetime-local" name="start_time" value={form.start_time} onChange={handleInputChange} required />
+                        <label>Duration</label>
+                        <input type="number" name="duration" value={form.duration} onChange={handleInputChange} placeholder="Duration (hours)" step="0.1" min="0" required />
+                    </>
+                ) : (
+                    <>
+                        <label>Start Time</label>
+                        <input type="datetime-local" name="start_time" value={form.start_time} onChange={handleInputChange} required />
+                        <label>End Time</label>
+                        <input type="datetime-local" name="end_time" value={form.end_time} onChange={handleInputChange} required />
+                    </>
+                )}
 
                 <label>Description</label>
                 <textarea name="description" value={form.description} onChange={handleInputChange} required />
@@ -157,7 +189,14 @@ function HoursTracker() {
                 {studySessions.map(renderSession)}
 
                 <h3>Service Hours: {calculateTotal(serviceSessions)}</h3>
-                {serviceSessions.map(renderSession)}
+                <div className="session-list">
+                    {serviceSessions.map(session => (
+                        <ServiceHourEntry 
+                            key={session.id} 
+                            session={session}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );

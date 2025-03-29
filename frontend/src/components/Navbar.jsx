@@ -86,6 +86,7 @@ function Navbar() {
                                             <li><Link to="/manage-roles">Manage Roles</Link></li>
                                         </>
                                     )}
+                                    <li><Link to="/manage-hours">Manage Hours</Link></li>
                                 </ul>
                             </li>
                         )}
