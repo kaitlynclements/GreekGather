@@ -2,20 +2,30 @@ import React, { useEffect, useState } from 'react';
 import './Profile.css';
 
 const Profile = () => {
-  const [user, setUser] = useState({ name: '', email: '' });
+  const [user, setUser] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    graduation_year: '',
+    major: '',
+    bio: ''
+  });
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/api/user/profile', {
-      headers: { Authorization: `Bearer ${token}` },
+    fetch('http://127.0.0.1:5000/auth/profile', {
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
     })
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch profile');
         return res.json();
       })
-      .then(data => setUser({ name: data.name, email: data.email }))
+      .then(data => setUser(data))
       .catch(err => console.error('Profile load error:', err));
   }, [token]);
 
@@ -25,7 +35,8 @@ const Profile = () => {
 
   const updateField = field => {
     if (!user[field]) return alert(`Please enter a ${field}`);
-    fetch('http://127.0.0.1:5000/api/user/profile', {
+    
+    fetch('http://127.0.0.1:5000/auth/profile/update', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -35,7 +46,11 @@ const Profile = () => {
     })
       .then(res => {
         if (!res.ok) throw new Error('Update failed');
+        return res.json();
+      })
+      .then(data => {
         alert(`${field[0].toUpperCase() + field.slice(1)} updated!`);
+        setUser(data.user);
       })
       .catch(err => {
         console.error(err);
@@ -77,7 +92,11 @@ const Profile = () => {
         <h3>Current Information</h3>
         <p><strong>Name:</strong> {user.name || 'Not set'}</p>
         <p><strong>Email:</strong> {user.email || 'Not set'}</p>
-    </div>
+        <p><strong>Phone:</strong> {user.phone || 'Not set'}</p>
+        <p><strong>Graduation Year:</strong> {user.graduation_year || 'Not set'}</p>
+        <p><strong>Major:</strong> {user.major || 'Not set'}</p>
+        <p><strong>Bio:</strong> {user.bio || 'Not set'}</p>
+      </div>
 
       <form className="profile-section" onSubmit={e => e.preventDefault()}>
         <label>Name</label>
@@ -89,6 +108,30 @@ const Profile = () => {
         <label>Email</label>
         <input name="email" value={user.email} onChange={handleChange} />
         <button type="button" onClick={() => updateField('email')}>Update Email</button>
+      </form>
+
+      <form className="profile-section" onSubmit={e => e.preventDefault()}>
+        <label>Phone</label>
+        <input name="phone" value={user.phone || ''} onChange={handleChange} />
+        <button type="button" onClick={() => updateField('phone')}>Update Phone</button>
+      </form>
+
+      <form className="profile-section" onSubmit={e => e.preventDefault()}>
+        <label>Graduation Year</label>
+        <input name="graduation_year" value={user.graduation_year || ''} onChange={handleChange} />
+        <button type="button" onClick={() => updateField('graduation_year')}>Update Graduation Year</button>
+      </form>
+
+      <form className="profile-section" onSubmit={e => e.preventDefault()}>
+        <label>Major</label>
+        <input name="major" value={user.major || ''} onChange={handleChange} />
+        <button type="button" onClick={() => updateField('major')}>Update Major</button>
+      </form>
+
+      <form className="profile-section" onSubmit={e => e.preventDefault()}>
+        <label>Bio</label>
+        <textarea name="bio" value={user.bio || ''} onChange={handleChange} />
+        <button type="button" onClick={() => updateField('bio')}>Update Bio</button>
       </form>
 
       <hr className="profile-divider" />

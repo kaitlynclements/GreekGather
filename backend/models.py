@@ -110,6 +110,12 @@ class User(db.Model):
     password = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(50), default="member")  # Roles: member, exec, admin
     chapter_id = db.Column(db.Integer, db.ForeignKey('chapter.id'), nullable=True)  
+    
+    # Add new columns with empty string defaults
+    phone = db.Column(db.String(20), nullable=True, server_default='')
+    graduation_year = db.Column(db.Integer, nullable=True)
+    major = db.Column(db.String(100), nullable=True, server_default='')
+    bio = db.Column(db.Text, nullable=True, server_default='')
 
     def set_password(self, password):
         """

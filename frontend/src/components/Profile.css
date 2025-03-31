@@ -89,4 +89,41 @@
     font-size: 1.2rem;
     font-weight: 600;
   }
+  
+  .profile-field {
+    margin-bottom: 20px;
+  }
+  
+  .profile-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .profile-field input,
+  .profile-field textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .profile-field textarea {
+    height: 100px;
+    resize: vertical;
+  }
+  
+  .profile-field button {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .profile-field button:hover {
+    background-color: #0056b3;
+  }
    

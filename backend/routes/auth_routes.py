@@ -723,5 +723,133 @@ def get_service_summary():
         ]
     })
 
+@auth_routes.route("/profile", methods=["GET"])
+@jwt_required()
+def get_profile():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+        
+    return jsonify({
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "role": user.role,
+        "chapter_id": user.chapter_id,
+        "phone": getattr(user, 'phone', None),  # Optional fields
+        "graduation_year": getattr(user, 'graduation_year', None),
+        "major": getattr(user, 'major', None),
+        "bio": getattr(user, 'bio', None)
+    })
+
+@auth_routes.route("/profile/update", methods=["PUT", "OPTIONS"])
+@jwt_required()
+def update_profile():
+    if request.method == "OPTIONS":
+        response = jsonify({"message": "Preflight request successful"})
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Methods", "PUT, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        return response, 200
+        
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+        
+    data = request.json
+    
+    # Update basic information
+    if "name" in data:
+        # Check if name is already taken by another user
+        existing_user = User.query.filter(User.name == data["name"], User.id != user_id).first()
+        if existing_user:
+            return jsonify({"error": "This name is already taken"}), 400
+        user.name = data["name"]
+        
+    if "email" in data:
+        # Validate email format
+        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if not re.match(email_regex, data["email"]):
+            return jsonify({"error": "Invalid email format"}), 400
+            
+        # Check if email is already taken
+        existing_user = User.query.filter(User.email == data["email"], User.id != user_id).first()
+        if existing_user:
+            return jsonify({"error": "This email is already taken"}), 400
+        user.email = data["email"]
+    
+    # Update optional fields
+    optional_fields = ["phone", "graduation_year", "major", "bio"]
+    for field in optional_fields:
+        if field in data:
+            setattr(user, field, data[field])
+    
+    try:
+        db.session.commit()
+        return jsonify({
+            "message": "Profile updated successfully",
+            "user": {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "role": user.role,
+                "chapter_id": user.chapter_id,
+                "phone": getattr(user, 'phone', None),
+                "graduation_year": getattr(user, 'graduation_year', None),
+                "major": getattr(user, 'major', None),
+                "bio": getattr(user, 'bio', None)
+            }
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to update profile: {str(e)}"}), 500
+
+@auth_routes.route("/profile/change-password", methods=["PUT", "OPTIONS"])
+@jwt_required()
+def change_password():
+    if request.method == "OPTIONS":
+        response = jsonify({"message": "Preflight request successful"})
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Methods", "PUT, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        return response, 200
+        
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+        
+    data = request.json
+    current_password = data.get("current_password")
+    new_password = data.get("new_password")
+    
+    if not current_password or not new_password:
+        return jsonify({"error": "Both current and new passwords are required"}), 400
+        
+    # Verify current password
+    if not user.check_password(current_password):
+        return jsonify({"error": "Current password is incorrect"}), 401
+        
+    # Validate new password
+    if not is_valid_password(new_password):
+        return jsonify({"error": "Password must be at least 8 characters long, contain at least one digit, one lowercase letter, one uppercase letter, and one special character."}), 400
+        
+    # Update password
+    user.set_password(new_password)
+    
+    try:
+        db.session.commit()
+        return jsonify({"message": "Password updated successfully"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to update password: {str(e)}"}), 500
+
 
 
