@@ -1,6 +1,7 @@
 Sam Muehlebach
   3/25: 2 hours- implementing Service and Study hour tracking backend routes, and frontend functionality
-Total Hours: 2
+  3/30: .5 hours- testing added functionality
+Total Hours: 2.5
 
 Lizzie Soltis:
   3/30: 3.5 hours - Backend profile customization
