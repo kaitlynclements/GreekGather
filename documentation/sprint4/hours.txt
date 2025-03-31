@@ -3,8 +3,8 @@ Sam Muehlebach
 Total Hours: 2
 
 Lizzie Soltis:
-  ...
-Total Hours: 0 
+  3/30: 3.5 hours - Backend profile customization
+Total Hours: 3.5
 
 Kaitlyn Clements: 
   03/24: 2 hours- trying to create update profile, but having bugs with backend routes interfering with other functionality
