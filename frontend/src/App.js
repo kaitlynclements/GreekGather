@@ -34,6 +34,8 @@ import Chapter from "./components/Chapter";
 import Profile from './components/Profile'
 import HoursTracker from './components/HoursTracker';
 import ManageHours from './components/ManageHours';
+import Photos from './components/Photos';
+import Files from './components/Files'
 
 function App() {
     const [userRole, setUserRole] = useState(null); // Start as null
@@ -72,6 +74,8 @@ function App() {
                         path="/manage-hours" 
                         element={(userRole === 'exec' || userRole === 'admin') ? <ManageHours /> : <Navigate to="/" />}
                     />
+                    <Route path="/media/photos" element={<Photos />} />
+                    <Route path="/media/files" element={<Files />} />
                 </Routes>
             </div>
         </Router>

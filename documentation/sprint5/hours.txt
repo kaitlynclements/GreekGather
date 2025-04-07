@@ -1,0 +1,24 @@
+Sam Muehlebach
+  ...
+Total Hours: 0
+
+Lizzie Soltis:
+  ...
+Total Hours: 0 
+
+Kaitlyn Clements: 
+  04/06: .5 Hours writing user stories for requirements artifacts for final sprint.
+  04/07: 1 Hour working on frontend for Media dropdown (Photos and Files Components). 
+  04/07: 1.5 Hour Working on backend routes. Adding Media routes into chapter_routes.py, having trouble migrating DB with new Photo model. I commented out things in the backend routes and models.py to avoid breaking functionality. Commented changes that I was having trouble with are in chapter_routes.py, models.py, and app.py. 
+Total Hours: 3
+
+Taylor Slade:
+  ...
+Total Hours: 0
+
+Aaditi Chinawalkar: 
+  ...
+Total Hours: 0
+
+
+Total Hours for Group: 3

@@ -28,6 +28,7 @@ function Navbar() {
     const [userRole, setUserRole] = useState("");
     const [isExpanded, setIsExpanded] = useState(false);
     const [isManageDropdownVisible, setIsManageDropdownVisible] = useState(false);
+    const [isMediaDropdownVisible, setIsMediaDropdownVisible] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -65,7 +66,22 @@ function Navbar() {
                     <>
                         <li><Link to="/chapter">Chapter</Link></li>
                         <li><Link to="/events">Calendar</Link></li>
+                        <li 
+                            className="dropdown"
+                            onMouseEnter={() => setIsMediaDropdownVisible(true)}
+                            onMouseLeave={() => setIsMediaDropdownVisible(false)}
+                        >
+                        <span className="dropdown-toggle">
+                            Media <FaChevronDown className="dropdown-arrow" />
+                        </span>
+                        <ul className={`dropdown-menu ${isMediaDropdownVisible ? "visible" : ""}`}>
+                            <li><Link to="/media/photos">Photos</Link></li>
+                            <li><Link to="/media/files">Files</Link></li>
+                        </ul>
+                        </li>
+
                         <li><Link to="/announcements">Announcements</Link></li>
+
                         <li><Link to="/track-hours">Study & Service Hours</Link></li>
 
                         {/* Manage Dropdown (Admins and Execs only) */}
@@ -114,4 +130,3 @@ function Navbar() {
 }
 
 export default Navbar;
-
