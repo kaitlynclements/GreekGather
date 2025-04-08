@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import './HoursTracker.css';
+import ServiceLeaderboard from './ServiceLeaderboard';
 
 function HoursTracker() {
     const navigate = useNavigate(); 
@@ -198,6 +199,8 @@ function HoursTracker() {
                     ))}
                 </div>
             </div>
+            
+            <ServiceLeaderboard />
         </div>
     );
 }

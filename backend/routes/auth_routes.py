@@ -23,6 +23,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 import re
 from datetime import datetime, timedelta
 from flask_cors import CORS
+from sqlalchemy import func
 
 auth_routes = Blueprint("auth", __name__)
 CORS(auth_routes, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
@@ -850,6 +851,37 @@ def change_password():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": f"Failed to update password: {str(e)}"}), 500
+
+@auth_routes.route("/service_hours_leaderboard", methods=["GET"])
+@jwt_required()
+def get_service_hours_leaderboard():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    # Get all verified service hours from users in the same chapter
+    leaderboard = db.session.query(
+        User.name,
+        func.sum(ServiceHour.duration_hours).label('total_hours')
+    ).join(
+        ServiceHour,
+        User.id == ServiceHour.user_id
+    ).filter(
+        User.chapter_id == user.chapter_id,
+        ServiceHour.verified == True
+    ).group_by(
+        User.id,
+        User.name
+    ).order_by(
+        func.sum(ServiceHour.duration_hours).desc()
+    ).all()
+
+    # Format the response
+    leaderboard_list = [{
+        "name": entry.name,
+        "total_hours": float(entry.total_hours) if entry.total_hours else 0
+    } for entry in leaderboard]
+
+    return jsonify(leaderboard_list)
 
 
 

@@ -17,8 +17,9 @@ Taylor Slade:
 Total Hours: 0
 
 Aaditi Chinawalkar: 
-  ...
-Total Hours: 0
+  04/08: 1 hour adding service hour leaderboard and fixing debugging issues that came with the addition.
+  04/08: .5 hours testing new features along with making sure existing features work and adding to database
+Total Hours: 1.5
 
 
-Total Hours for Group: 3
+Total Hours for Group: 4.5

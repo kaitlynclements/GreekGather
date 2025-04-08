@@ -167,38 +167,69 @@ def edit_event(event_id):
     return response, 200
 
 
-@event_routes.route("/delete_event/<int:event_id>", methods=["OPTIONS"])
-@cross_origin()
-def preflight_delete_event(event_id):
-    response = jsonify({"message": "Preflight request successful"})
-    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
-    response.headers.add("Access-Control-Allow-Methods", "DELETE, OPTIONS")
-    response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
-    response.headers.add("Access-Control-Allow-Credentials", "true")
-    return response, 200
-@event_routes.route("/delete_event/<int:event_id>", methods=["DELETE"])
+@event_routes.route("/delete_event/<int:event_id>", methods=["DELETE", "OPTIONS"])
 @jwt_required()
 def delete_event(event_id):
-    user_id = get_jwt_identity()
+    if request.method == "OPTIONS":
+        response = jsonify({"message": "Preflight request successful"})
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Methods", "DELETE")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        return response, 200
 
-    # Find the user
-    user = User.query.get(user_id)
-    if not user or user.role not in ["exec", "admin"]:
-        return jsonify({"error": "Only Vice Presidents and Admins can delete events"}), 403
+    try:
+        user_id = get_jwt_identity()
+        print(f"DEBUG: Attempting to delete event {event_id} by user {user_id}")
 
-    # Find the event
-    event = Event.query.get(event_id)
-    if not event:
-        return jsonify({"error": "Event not found"}), 404
+        # Find the user
+        user = User.query.get(user_id)
+        if not user or user.role not in ["exec", "admin"]:
+            return jsonify({"error": "Only Vice Presidents and Admins can delete events"}), 403
 
-    db.session.delete(event)
-    db.session.commit()
+        # Find the event
+        event = Event.query.get(event_id)
+        if not event:
+            return jsonify({"error": "Event not found"}), 404
 
-    response = jsonify({"message": "Event deleted successfully"})
-    response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
-    response.headers.add("Access-Control-Allow-Credentials", "true")
+        # Check if user is from the same chapter as the event
+        if event.chapter_id != user.chapter_id:
+            return jsonify({"error": "Cannot delete events from other chapters"}), 403
 
-    return response, 200
+        # Delete associated expenses first
+        if event.budget:
+            # Get all expenses associated with this event's budget
+            expenses = EventExpense.query.filter_by(budget_id=event.budget.id).all()
+            for expense in expenses:
+                db.session.delete(expense)
+            
+            # Delete the budget
+            db.session.delete(event.budget)
+            
+        # Delete any RSVPs
+        RSVPs = RSVP.query.filter_by(event_id=event_id).all()
+        for rsvp in RSVPs:
+            db.session.delete(rsvp)
+
+        # Now delete the event
+        db.session.delete(event)
+        db.session.commit()
+
+        response = jsonify({"message": "Event deleted successfully"})
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        return response, 200
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"ERROR: Failed to delete event {event_id}: {str(e)}")
+        import traceback
+        print(f"ERROR traceback: {traceback.format_exc()}")
+        
+        response = jsonify({"error": f"Failed to delete event: {str(e)}"})
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        return response, 500
 
 @event_routes.route("/events_by_date/<string:date>", methods=["GET"])
 @jwt_required()

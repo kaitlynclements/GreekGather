@@ -1,0 +1,51 @@
+.leaderboard-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.leaderboard-list {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.leaderboard-entry {
+    display: grid;
+    grid-template-columns: 50px 1fr 100px;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+}
+
+.leaderboard-entry:last-child {
+    border-bottom: none;
+}
+
+.rank {
+    font-weight: bold;
+    color: #666;
+}
+
+.name {
+    font-weight: 500;
+}
+
+.hours {
+    text-align: right;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+/* Top 3 styling */
+.leaderboard-entry:nth-child(1) .rank {
+    color: gold;
+}
+
+.leaderboard-entry:nth-child(2) .rank {
+    color: silver;
+}
+
+.leaderboard-entry:nth-child(3) .rank {
+    color: #cd7f32;
+}

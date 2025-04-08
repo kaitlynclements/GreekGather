@@ -115,35 +115,48 @@ function ManageEvents() {
 
     const handleDelete = async (eventId) => {
         const token = localStorage.getItem("token");
-    
+
         if (!token) {
-            console.error("No JWT token found, cannot delete event.");
+            alert("No authentication token found. Please log in again.");
             return;
         }
-    
+
         if (!window.confirm("Are you sure you want to delete this event?")) {
             return;
         }
-    
+
         try {
+            console.log(`Attempting to delete event ${eventId}`); // Debug log
             const response = await fetch(`http://127.0.0.1:5000/delete_event/${eventId}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
+                credentials: 'include',
             });
-    
+
+            // Log the response status and headers
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+
+            const data = await response.json();
+            console.log('Response data:', data); // Debug log
+
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Error deleting event");
+                throw new Error(data.error || "Error deleting event");
             }
-    
-            setEvents(events.filter(event => event.id !== eventId)); // Remove event from list
-    
+
+            setEvents(events.filter(event => event.id !== eventId));
+            alert("Event deleted successfully");
+
         } catch (error) {
             console.error("Error deleting event:", error);
-            alert("Failed to delete event");
+            console.error("Full error details:", {
+                message: error.message,
+                stack: error.stack
+            });
+            alert(`Failed to delete event: ${error.message}`);
         }
     };
 
