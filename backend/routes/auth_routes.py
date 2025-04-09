@@ -884,4 +884,39 @@ def get_service_hours_leaderboard():
     return jsonify(leaderboard_list)
 
 
+@auth_routes.route("/study_hour_leaderboard", methods=["GET"])
+@jwt_required()
+def get_study_hour_leaderboard():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if not user or not user.chapter_id:
+        return jsonify({"error": "User not part of a chapter"}), 400
+
+    leaderboard = db.session.query(
+        User.name,
+        func.sum(StudySession.duration_hours).label('total_hours')
+    ).join(
+        StudySession, User.id == StudySession.user_id
+    ).filter(
+        User.chapter_id == user.chapter_id
+    ).group_by(
+        User.id,
+        User.name
+    ).order_by(
+        func.sum(StudySession.duration_hours).desc()
+    ).all()
+
+    leaderboard_list = [
+        {
+            "name": entry.name,
+            "total_hours": float(entry.total_hours or 0)
+        }
+        for entry in leaderboard
+    ]
+
+    return jsonify(leaderboard_list)
+
+
+
 
