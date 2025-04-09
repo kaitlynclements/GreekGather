@@ -6,28 +6,27 @@ function StudyLeaderboard() {
     const token = localStorage.getItem("token");
 
     useEffect(() => {
-        fetchLeaderboard();
-    }, []);
+        const fetchLeaderboard = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/auth/study_hour_leaderboard', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const data = await response.json();
 
-    const fetchLeaderboard = async () => {
-        try {
-            const response = await fetch('http://127.0.0.1:5000/auth/study_hour_leaderboard', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await response.json();
-    
-            if (Array.isArray(data)) {
-                setLeaderboard(data);
-            } else {
-                console.error("Unexpected response:", data);
-                setLeaderboard([]);  
+                if (Array.isArray(data)) {
+                    setLeaderboard(data);
+                } else {
+                    console.error("Unexpected response:", data);
+                    setLeaderboard([]);
+                }
+            } catch (error) {
+                console.error('Error fetching study leaderboard:', error);
+                setLeaderboard([]);
             }
-        } catch (error) {
-            console.error('Error fetching study leaderboard:', error);
-            setLeaderboard([]);
-        }
-    };
-    
+        };
+
+        fetchLeaderboard(); 
+    }, [token]); 
 
     return (
         <div className="leaderboard-container">
