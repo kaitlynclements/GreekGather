@@ -10,8 +10,11 @@ const Profile = () => {
     major: '',
     bio: ''
   });
-  const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -58,29 +61,35 @@ const Profile = () => {
       });
   };
 
-  const handlePasswordChange = async () => {
-    if (password !== confirmPassword) {
-      alert('Passwords do not match');
-      return;
-    }
-
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/user/password', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ password }),
-      });
+        const response = await fetch('http://127.0.0.1:5000/auth/change-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                currentPassword: currentPassword,
+                newPassword: newPassword
+            })
+        });
 
-      if (!response.ok) throw new Error('Password update failed');
-      alert('Password updated!');
-      setPassword('');
-      setConfirmPassword('');
-    } catch (err) {
-      console.error('Password change error:', err);
-      alert('Failed to change password');
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to change password');
+        }
+
+        const { message } = await response.json();
+        setMessage(message);
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+    } catch (error) {
+        console.error('Password change error:', error);
+        setError(error.message || 'Failed to change password');
     }
   };
 
@@ -137,14 +146,26 @@ const Profile = () => {
       <hr className="profile-divider" />
 
       <div className="profile-section">
+        <label>Current Password</label>
+        <input
+          type="password"
+          placeholder="Current Password"
+          value={currentPassword}
+          onChange={(e) => setCurrentPassword(e.target.value)}
+        />
+      </div>
+
+      <div className="profile-section">
         <label>New Password</label>
         <input
           type="password"
           placeholder="New Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
         />
+      </div>
 
+      <div className="profile-section">
         <label>Confirm Password</label>
         <input
           type="password"
@@ -152,19 +173,18 @@ const Profile = () => {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
-
-        {password && confirmPassword && password !== confirmPassword && (
-          <p style={{ color: 'red', fontSize: '0.9rem' }}>Passwords do not match</p>
-        )}
-
-        <button
-          type="button"
-          onClick={handlePasswordChange}
-          disabled={!password || password !== confirmPassword}
-        >
-          Change Password
-        </button>
       </div>
+
+      <button
+        type="button"
+        onClick={handlePasswordChange}
+        disabled={!currentPassword || !newPassword || !confirmPassword}
+      >
+        Change Password
+      </button>
+
+      {message && <p className="success-message">{message}</p>}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };

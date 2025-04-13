@@ -810,47 +810,27 @@ def update_profile():
         db.session.rollback()
         return jsonify({"error": f"Failed to update profile: {str(e)}"}), 500
 
-@auth_routes.route("/profile/change-password", methods=["PUT", "OPTIONS"])
+@auth_routes.route("/change-password", methods=["POST"])
 @jwt_required()
 def change_password():
-    if request.method == "OPTIONS":
-        response = jsonify({"message": "Preflight request successful"})
-        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
-        response.headers.add("Access-Control-Allow-Methods", "PUT, OPTIONS")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        response.headers.add("Access-Control-Allow-Credentials", "true")
-        return response, 200
-        
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     
-    if not user:
-        return jsonify({"error": "User not found"}), 404
-        
     data = request.json
-    current_password = data.get("current_password")
-    new_password = data.get("new_password")
+    current_password = data.get("currentPassword")
+    new_password = data.get("newPassword")
     
-    if not current_password or not new_password:
-        return jsonify({"error": "Both current and new passwords are required"}), 400
-        
-    # Verify current password
     if not user.check_password(current_password):
         return jsonify({"error": "Current password is incorrect"}), 401
-        
-    # Validate new password
-    if not is_valid_password(new_password):
-        return jsonify({"error": "Password must be at least 8 characters long, contain at least one digit, one lowercase letter, one uppercase letter, and one special character."}), 400
-        
-    # Update password
-    user.set_password(new_password)
     
-    try:
-        db.session.commit()
-        return jsonify({"message": "Password updated successfully"})
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": f"Failed to update password: {str(e)}"}), 500
+    # Validate new password (reuse your password validation if you have it)
+    if not is_valid_password(new_password):
+        return jsonify({"error": "New password does not meet requirements"}), 400
+        
+    user.set_password(new_password)
+    db.session.commit()
+    
+    return jsonify({"message": "Password updated successfully"})
 
 @auth_routes.route("/service_hours_leaderboard", methods=["GET"])
 @jwt_required()
