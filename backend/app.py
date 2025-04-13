@@ -22,10 +22,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from database import db
-from models import User, Event, EventMonitor  # , Photo, db
+from models import User, Event, EventMonitor, Photo  # , Photo, db
 from routes.auth_routes import auth_routes
 from routes.event_routes import event_routes
 from routes.chapter_routes import chapter_routes
+from routes.photo_routes import photo_routes
+
 
 app = Flask(__name__)
 
@@ -50,6 +52,7 @@ jwt = JWTManager(app)
 app.register_blueprint(auth_routes, url_prefix="/auth")
 app.register_blueprint(event_routes)
 app.register_blueprint(chapter_routes)
+app.register_blueprint(photo_routes)
 
 
 @app.route("/")

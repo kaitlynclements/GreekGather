@@ -319,6 +319,16 @@ class ServiceHour(db.Model):
     )
 
 
+class Photo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    uploader_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    chapter_id = db.Column(db.Integer, db.ForeignKey("chapter.id"), nullable=False)
+    image_url = db.Column(db.String(300), nullable=False)
+    caption = db.Column(db.String(255), nullable=True)
+    upload_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    uploader = db.relationship("User", backref="uploaded_photos")
+
 """
 # Photos Model
 class Photo(db.Model):
