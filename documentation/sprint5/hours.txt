@@ -1,6 +1,7 @@
 Sam Muehlebach
-  ...
-Total Hours: 0
+  04/09: 1 hour implenting the study hour leaderboard
+  04/13: .5 hours testing spirnt 5 requirements
+Total Hours: 1.5 hours
 
 Lizzie Soltis:
   ...
@@ -22,4 +23,4 @@ Aaditi Chinawalkar:
 Total Hours: 1.5
 
 
-Total Hours for Group: 6.5
+Total Hours for Group: 8 hrs
