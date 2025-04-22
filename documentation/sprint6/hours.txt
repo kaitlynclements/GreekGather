@@ -1,0 +1,3 @@
+Kaitlyn Clements
+  04/21 - 1 hour: frontend file upload, drag and drop features just like photos
+Total Hours: 1 hour
