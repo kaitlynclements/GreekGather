@@ -19,6 +19,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './Login.css'; // Import the new CSS file
 
 function Login() {
@@ -26,6 +27,7 @@ function Login() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     /*Sends login credentails to backend for handling user authentication. Stores authentication
     token and user role in local storage if successful*/
@@ -40,17 +42,21 @@ function Login() {
     
             const data = await response.json();
             if (response.ok) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('role', data.role);
-                localStorage.setItem('chapter_id', data.chapter_id); // Store chapter_id
-    
-                navigate('/events'); // Navigate first
-                window.location.reload(); // Reload after navigation
+                // Use AuthContext login function
+                login({
+                    token: data.token,
+                    role: data.role,
+                    username: data.username,
+                    chapter_id: data.chapter_id
+                });
+                
+                navigate('/events');
             } else {
                 setError(data.error);
             }
         } catch (error) {
             console.error('Login error:', error);
+            setError('An error occurred during login');
         }
     };
     

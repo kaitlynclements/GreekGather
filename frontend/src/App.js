@@ -15,7 +15,7 @@
  * Invariants: Server must remain available.
  * Known Faults: N/A
 */
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Welcome from './components/Welcome';
 import Login from './components/Login';
@@ -36,49 +36,54 @@ import HoursTracker from './components/HoursTracker';
 import ManageHours from './components/ManageHours';
 import Photos from './components/Photos';
 import Files from './components/Files'
+import Announcements from './components/Announcements';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
-function App() {
-    const [userRole, setUserRole] = useState(null); // Start as null
-
-    useEffect(() => {
-        const role = localStorage.getItem("role") || "guest";  // Default to "guest"
-        setUserRole(role);
-        console.log("Updated userRole:", role);
-    }, []);
+function AppRoutes() {
+    const { user } = useAuth();
 
     return (
-        <Router>
-            <Navbar />
-            <div className="main-content">  {/* ✅ Ensures content is pushed down */}
-                <Routes>
-                    <Route path="/" element={<Welcome />} />
-                    <Route path="/login" element={<Login setUserRole={setUserRole} />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/events" element={<Events />} />
-                    <Route path="/chapter" element={<Chapter />} />
-                    <Route path="/create_chapter" element={<CreateChapter />} />
-                    <Route path="/join_chapter" element={<JoinChapter />} />
-                    <Route path="/track-hours" element={<HoursTracker />} />
-                    <Route path="/assign_role" element={userRole === 'admin' ? <AssignRole /> : <Navigate to="/" />} />
-                    <Route path="/manage-events" element={(userRole === 'exec' || userRole === 'admin') ? <ManageEvents /> : <Navigate to="/" />} />
-                    <Route 
-                        path="/request-dashboard" 
-                        element={userRole === null ? null : (userRole === "admin" ? <RequestDashboard /> : <Navigate to="/" />)}
-                    />
-                    <Route 
-                        path="/manage-roles" 
-                        element={userRole === "admin" ? <ManageRoles /> : <Navigate to="/" />}
-                    />
-                    <Route path="/profile" element={<Profile />}/>
-                    <Route 
-                        path="/manage-hours" 
-                        element={(userRole === 'exec' || userRole === 'admin') ? <ManageHours /> : <Navigate to="/" />}
-                    />
-                    <Route path="/media/photos" element={<Photos />} />
-                    <Route path="/media/files" element={<Files />} />
-                </Routes>
-            </div>
-        </Router>
+        <Routes>
+            <Route path="/" element={<Welcome />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/chapter" element={<Chapter />} />
+            <Route path="/create_chapter" element={<CreateChapter />} />
+            <Route path="/join_chapter" element={<JoinChapter />} />
+            <Route path="/track-hours" element={<HoursTracker />} />
+            <Route path="/assign_role" element={user?.role === 'admin' ? <AssignRole /> : <Navigate to="/" />} />
+            <Route path="/manage-events" element={(user?.role === 'exec' || user?.role === 'admin') ? <ManageEvents /> : <Navigate to="/" />} />
+            <Route 
+                path="/request-dashboard" 
+                element={user?.role === "admin" ? <RequestDashboard /> : <Navigate to="/" />}
+            />
+            <Route 
+                path="/manage-roles" 
+                element={user?.role === "admin" ? <ManageRoles /> : <Navigate to="/" />}
+            />
+            <Route path="/profile" element={<Profile />}/>
+            <Route 
+                path="/manage-hours" 
+                element={(user?.role === 'exec' || user?.role === 'admin') ? <ManageHours /> : <Navigate to="/" />}
+            />
+            <Route path="/media/photos" element={<Photos />} />
+            <Route path="/media/files" element={<Files />} />
+            <Route path="/announcements" element={<Announcements />} />
+        </Routes>
+    );
+}
+
+function App() {
+    return (
+        <AuthProvider>
+            <Router>
+                <Navbar />
+                <div className="main-content">
+                    <AppRoutes />
+                </div>
+            </Router>
+        </AuthProvider>
     );
 }
 

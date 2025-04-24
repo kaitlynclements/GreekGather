@@ -22,6 +22,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './Register.css'; // Import the CSS file
 
 function Register() {
@@ -31,6 +32,7 @@ function Register() {
     const [error, setError] = useState('');
     const [passwordValid, setPasswordValid] = useState(false);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     // Password validation function
     const validatePassword = (password) => {
@@ -66,15 +68,20 @@ function Register() {
 
             const data = await response.json();
             if (response.ok) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('role', data.role);
-                window.location.reload();
+                // Use AuthContext login function
+                login({
+                    token: data.token,
+                    role: data.role,
+                    username: data.username,
+                    chapter_id: data.chapter_id
+                });
                 navigate('/events');
             } else {
                 setError(data.error);
             }
         } catch (error) {
             console.error('Registration error:', error);
+            setError('An error occurred during registration');
         }
     };
 
@@ -108,7 +115,7 @@ function Register() {
                         <span>{/\d/.test(password) ? "✅" : "❌"}</span> <span>One number</span>
                     </li>
                     <li style={{ color: /[!@#$%^&*()-_+=<>?/]/.test(password) ? "green" : "red" }}>
-                        <span>{password.length >= 8 ? "✅" : "❌"}</span> <span>At least 8 characters</span>
+                        <span>{/[!@#$%^&*()-_+=<>?/]/.test(password) ? "✅" : "❌"}</span> <span>One special character</span>
                     </li>
                 </ul>
 

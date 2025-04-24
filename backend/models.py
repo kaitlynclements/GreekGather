@@ -329,16 +329,42 @@ class Photo(db.Model):
 
     uploader = db.relationship("User", backref="uploaded_photos")
 
-"""
-# Photos Model
-class Photo(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    image_url = db.Column(db.String(255), nullable=False)
-    caption = db.Column(db.String(255))
-    uploader_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    chapter_id = db.Column(db.Integer, db.ForeignKey("chapter.id"), nullable=False)
-    upload_date = db.Column(db.DateTime, default=datetime.utcnow)
 
-    uploader = db.relationship("User", backref="uploaded_photos")
-    chapter = db.relationship("Chapter", backref="photos")
-"""
+class Announcement(db.Model):
+    """
+    Announcement model for chapter announcements.
+    Allows chapter executives to post announcements visible to all chapter members.
+
+    Attributes:
+        id (Integer): Primary key
+        title (String): Announcement title
+        message (Text): Announcement content
+        author_id (Integer): Foreign key to the author (User)
+        chapter_id (Integer): Foreign key to the chapter
+        created_at (DateTime): Timestamp of creation
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    chapter_id = db.Column(db.Integer, db.ForeignKey("chapter.id"), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    author = db.relationship("User", backref="announcements")
+    chapter = db.relationship("Chapter", backref="announcements")
+
+    def to_dict(self):
+        """
+        Convert announcement to dictionary format
+
+        Returns:
+            dict: Announcement data for JSON serialization
+        """
+        return {
+            "id": self.id,
+            "title": self.title,
+            "message": self.message,
+            "author": self.author.name,
+            "chapter_id": self.chapter_id,
+            "created_at": self.created_at.isoformat()
+        }

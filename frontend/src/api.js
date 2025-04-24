@@ -56,3 +56,71 @@ export async function loginUser(credentials) {
         console.error("Error logging in:", error);
     }
 }
+
+// Announcement API functions
+export async function getAnnouncements() {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/api/announcements`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.json();
+    } catch (error) {
+        console.error("Error fetching announcements:", error);
+        return [];
+    }
+}
+
+export async function createAnnouncement(announcementData) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/api/announcements`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(announcementData)
+        });
+        return response.json();
+    } catch (error) {
+        console.error("Error creating announcement:", error);
+        throw error;
+    }
+}
+
+export async function updateAnnouncement(id, announcementData) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/api/announcements/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(announcementData)
+        });
+        return response.json();
+    } catch (error) {
+        console.error("Error updating announcement:", error);
+        throw error;
+    }
+}
+
+export async function deleteAnnouncement(id) {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/api/announcements/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.ok;
+    } catch (error) {
+        console.error("Error deleting announcement:", error);
+        throw error;
+    }
+}

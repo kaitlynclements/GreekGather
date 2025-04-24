@@ -18,28 +18,17 @@
 
 
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaChevronDown } from "react-icons/fa";
+import { useAuth } from '../contexts/AuthContext';
 import "./Navbar.css";
 
 function Navbar() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [username, setUsername] = useState("");
-    const [userRole, setUserRole] = useState("");
     const [isExpanded, setIsExpanded] = useState(false);
     const [isManageDropdownVisible, setIsManageDropdownVisible] = useState(false);
     const [isMediaDropdownVisible, setIsMediaDropdownVisible] = useState(false);
-
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        setIsLoggedIn(!!token);
-
-        const storedUsername = localStorage.getItem("username");
-        const storedRole = localStorage.getItem("role");
-
-        if (storedUsername) setUsername(storedUsername);
-        if (storedRole) setUserRole(storedRole);
-    }, []);
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
 
     return (
         <nav 
@@ -57,7 +46,7 @@ function Navbar() {
             <ul className="nav-list">
                 <li><Link to="/">Home</Link></li>
         
-                {!isLoggedIn ? (
+                {!user ? (
                     <>
                         <li><Link to="/login">Login</Link></li>
                         <li><Link to="/register">Register</Link></li>
@@ -85,7 +74,7 @@ function Navbar() {
                         <li><Link to="/track-hours">Study & Service Hours</Link></li>
 
                         {/* Manage Dropdown (Admins and Execs only) */}
-                        {(userRole === "admin" || userRole === "exec") && (
+                        {(user.role === "admin" || user.role === "exec") && (
                             <li 
                                 className="dropdown"
                                 onMouseEnter={() => setIsManageDropdownVisible(true)}
@@ -96,7 +85,7 @@ function Navbar() {
                                 </span>
                                 <ul className={`dropdown-menu ${isManageDropdownVisible ? "visible" : ""}`}>
                                     <li><Link to="/manage-events">Manage Events</Link></li>
-                                    {userRole === "admin" && (
+                                    {user.role === "admin" && (
                                         <>
                                             <li><Link to="/request-dashboard">Manage Requests</Link></li>
                                             <li><Link to="/manage-roles">Manage Roles</Link></li>
@@ -107,16 +96,16 @@ function Navbar() {
                             </li>
                         )}
 
-                            <li>
-                                <Link to="/profile" className="profile-link">{username || "Profile"}</Link>
-                            </li>
+                        <li>
+                            <Link to="/profile" className="profile-link">Profile</Link>
+                        </li>
 
                         <li>
                             <Link
                                 to="/"
                                 onClick={() => {
-                                    localStorage.clear();
-                                    window.location.reload();
+                                    logout();
+                                    navigate('/');
                                 }}
                             >
                                 Logout
