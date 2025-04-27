@@ -85,7 +85,7 @@ function Files() {
 
     return (
         <div className="photo-gallery-container"> {/* Reusing layout class */}
-            <h2>📎 Chapter File Repository</h2>
+            <h2>Chapter File Repository</h2>
             <p>Upload waivers, flyers, or other documents here.</p>
 
             <div

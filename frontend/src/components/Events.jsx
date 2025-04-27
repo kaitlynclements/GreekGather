@@ -131,7 +131,32 @@ function Events() {
             alert("Failed to submit RSVP");
         }
     };
-    
+
+    const getEventsForDate = (date) => {
+        return events.filter(event => {
+            const eventDate = new Date(event.date);
+            return eventDate.toDateString() === date.toDateString();
+        });
+    };
+
+    const tileContent = ({ date, view }) => {
+        if (view === 'month') {
+            const dayEvents = getEventsForDate(date);
+            if (dayEvents.length > 0) {
+                return (
+                    <div className="event-dot">
+                        {dayEvents.length === 1 ? (
+                            <span className="event-name">{dayEvents[0].name}</span>
+                        ) : (
+                            <span className="event-name">{dayEvents.length} Events</span>
+                        )}
+                    </div>
+                );
+            }
+        }
+        return null;
+    };
+
     return (
         <div className="calendar-container">
             <h2>Chapter Events</h2>
@@ -139,7 +164,12 @@ function Events() {
                 <button className="create-event-btn" onClick={() => alert('Feature not implemented yet')}>Create Event</button>
             )}
 
-            <Calendar onClickDay={handleDateClick} value={selectedDate} className="react-calendar" />
+            <Calendar 
+                onClickDay={handleDateClick} 
+                value={selectedDate} 
+                className="react-calendar"
+                tileContent={tileContent}
+            />
 
             {isPopupOpen && (
         <div className="popup">

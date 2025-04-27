@@ -16,12 +16,21 @@
  * Known Faults: N/A.
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Welcome.css';
 
 function Welcome() {
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const chapterId = localStorage.getItem('chapter_id');
+        
+        if (token && chapterId) {
+            navigate('/dashboard');
+        }
+    }, [navigate]);
 
     return (
         <div className="welcome-container">

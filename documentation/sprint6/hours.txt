@@ -4,4 +4,8 @@ Kaitlyn Clements
 Aaditi Chinawalkar:
   04/23 - 1 hour: adding functionality to frontend to help handle login/logout more efficently
   04/24 - 2.5 hours: adding annoucnements functionality and testing features
-Total Hours: 4.5 hours
+
+Elizabeth Soltis:
+  04/27 - 1.5 hours: adding dashboard functionality, fix some UI tweaks 
+
+Total Hours: 6 hours

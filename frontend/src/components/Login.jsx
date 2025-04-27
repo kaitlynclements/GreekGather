@@ -50,7 +50,12 @@ function Login() {
                     chapter_id: data.chapter_id
                 });
                 
-                navigate('/events');
+                // Check if user has a chapter_id
+                if (data.chapter_id) {
+                    navigate('/dashboard');
+                } else {
+                    navigate('/'); // Navigate to welcome page if no chapter
+                }
             } else {
                 setError(data.error);
             }

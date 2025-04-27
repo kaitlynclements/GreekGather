@@ -192,3 +192,16 @@
 .popup-content button:hover {
     background-color: #0056b3;
 }
+
+/* Update calendar tile styling */
+.react-calendar__tile {
+    position: relative;
+    height: 60px; /* Increase tile height to accommodate event names */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.react-calendar__tile abbr {
+    margin-bottom: 2px;
+}

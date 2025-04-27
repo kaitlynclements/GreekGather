@@ -70,7 +70,7 @@ function Photos() {
 
     return (
         <div className="photo-gallery-container">
-            <h2>📸 Chapter Photo Gallery</h2>
+            <h2>Chapter Photo Gallery</h2>
             <p>This page will display photos uploaded by chapter members.</p>
 
             <div

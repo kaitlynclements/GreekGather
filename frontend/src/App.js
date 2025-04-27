@@ -38,6 +38,7 @@ import Photos from './components/Photos';
 import Files from './components/Files'
 import Announcements from './components/Announcements';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import Dashboard from './components/Dashboard';
 
 function AppRoutes() {
     const { user } = useAuth();
@@ -70,6 +71,7 @@ function AppRoutes() {
             <Route path="/media/photos" element={<Photos />} />
             <Route path="/media/files" element={<Files />} />
             <Route path="/announcements" element={<Announcements />} />
+            <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
     );
 }
