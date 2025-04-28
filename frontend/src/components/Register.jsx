@@ -23,28 +23,33 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import './Register.css'; // Import the CSS file
+import './Register.css';
 
 function Register() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [passwordValid, setPasswordValid] = useState(false);
+    const [passwordChecks, setPasswordChecks] = useState({
+        minLength: false,
+        hasUpper: false,
+        hasLower: false,
+        hasDigit: false,
+        hasSpecial: false,
+    });
     const navigate = useNavigate();
     const { login } = useAuth();
 
-    // Password validation function
     const validatePassword = (password) => {
-        const minLength = password.length >= 8;
-        const hasUpper = /[A-Z]/.test(password);
-        const hasLower = /[a-z]/.test(password);
-        const hasDigit = /\d/.test(password);
-        const hasSpecial = /[!@#$%^&*()-_+=<>?/]/.test(password);
-
-        setPasswordValid(minLength && hasUpper && hasLower && hasDigit && hasSpecial);
-
-        return { minLength, hasUpper, hasLower, hasDigit, hasSpecial };
+        const checks = {
+            minLength: password.length >= 8,
+            hasUpper: /[A-Z]/.test(password),
+            hasLower: /[a-z]/.test(password),
+            hasDigit: /\d/.test(password),
+            hasSpecial: /[!@#$%^&*()\-_+=<>?/]/.test(password),
+        };
+        setPasswordChecks(checks);
+        return Object.values(checks).every(Boolean);
     };
 
     const handlePasswordChange = (e) => {
@@ -55,7 +60,7 @@ function Register() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        if (!passwordValid) {
+        if (!validatePassword(password)) {
             setError('Password does not meet requirements.');
             return;
         }
@@ -68,7 +73,6 @@ function Register() {
 
             const data = await response.json();
             if (response.ok) {
-                // Use AuthContext login function
                 login({
                     token: data.token,
                     role: data.role,
@@ -102,24 +106,24 @@ function Register() {
                 
                 {/* Password Requirements Section */}
                 <ul className="password-requirements">
-                    <li style={{ color: password.length >= 8 ? "green" : "red" }}>
-                        <span>{password.length >= 8 ? "✅" : "❌"}</span> <span>At least 8 characters</span>
+                    <li style={{ color: passwordChecks.minLength ? "green" : "red" }}>
+                        <span>{passwordChecks.minLength ? "✅" : "❌"}</span> <span>At least 8 characters</span>
                     </li>
-                    <li style={{ color: /[A-Z]/.test(password) ? "green" : "red" }}>
-                        <span>{/[A-Z]/.test(password) ? "✅" : "❌"}</span> <span>One uppercase letter</span>
+                    <li style={{ color: passwordChecks.hasUpper ? "green" : "red" }}>
+                        <span>{passwordChecks.hasUpper ? "✅" : "❌"}</span> <span>One uppercase letter</span>
                     </li>
-                    <li style={{ color: /[a-z]/.test(password) ? "green" : "red" }}>
-                        <span>{/[a-z]/.test(password) ? "✅" : "❌"}</span> <span>One lowercase letter</span>
+                    <li style={{ color: passwordChecks.hasLower ? "green" : "red" }}>
+                        <span>{passwordChecks.hasLower ? "✅" : "❌"}</span> <span>One lowercase letter</span>
                     </li>
-                    <li style={{ color: /\d/.test(password) ? "green" : "red" }}>
-                        <span>{/\d/.test(password) ? "✅" : "❌"}</span> <span>One number</span>
+                    <li style={{ color: passwordChecks.hasDigit ? "green" : "red" }}>
+                        <span>{passwordChecks.hasDigit ? "✅" : "❌"}</span> <span>One number</span>
                     </li>
-                    <li style={{ color: /[!@#$%^&*()-_+=<>?/]/.test(password) ? "green" : "red" }}>
-                        <span>{/[!@#$%^&*()-_+=<>?/]/.test(password) ? "✅" : "❌"}</span> <span>One special character</span>
+                    <li style={{ color: passwordChecks.hasSpecial ? "green" : "red" }}>
+                        <span>{passwordChecks.hasSpecial ? "✅" : "❌"}</span> <span>One special character</span>
                     </li>
                 </ul>
 
-                <button type="submit" disabled={!passwordValid}>Register</button>
+                <button type="submit" disabled={!Object.values(passwordChecks).every(Boolean)}>Register</button>
             </form>
         </div>
     );

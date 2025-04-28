@@ -8,7 +8,7 @@ function HoursTracker() {
     const navigate = useNavigate(); 
     const [studySessions, setStudySessions] = useState([]);
     const [serviceSessions, setServiceSessions] = useState([]);
-    const [form, setForm] = useState({ start_time: '', end_time: '', description: '', type: 'study', duration: '' });
+    const [form, setForm] = useState({ date: '', duration: '', description: '', type: 'study' });
     const [period, setPeriod] = useState('week');
 
     const token = localStorage.getItem("token");
@@ -64,22 +64,11 @@ function HoursTracker() {
         let payload;
 
         try {
-            if (isService) {
-                const start = new Date(form.start_time);
-                
-                payload = {
-                    date: start.toISOString().split("T")[0],          
-                    time: start.toTimeString().slice(0, 5),           
-                    duration_hours: parseFloat(form.duration) || 0,
-                    description: form.description
-                };
-            } else {
-                payload = {
-                    start_time: form.start_time,
-                    end_time: form.end_time,
-                    description: form.description
-                };
-            }
+            payload = {
+                date: form.date,
+                duration_hours: parseFloat(form.duration) || 0,
+                description: form.description
+            };
 
             const response = await fetch(`http://127.0.0.1:5000/auth/${endpoint}`, {
                 method: "POST",
@@ -98,8 +87,7 @@ function HoursTracker() {
             await fetchStudySessions();
             await fetchServiceSessions();
             
-            setForm({ start_time: '', end_time: '', description: '', type: 'study', duration: '' });
-            
+            setForm({ date: '', duration: '', description: '', type: 'study' });
             alert("Hours submitted successfully!");
         } catch (err) {
             console.error("Error submitting session:", err);
@@ -111,17 +99,12 @@ function HoursTracker() {
         sessions.reduce((sum, s) => sum + (s.duration_hours ?? s.duration ?? 0), 0).toFixed(2);
 
     const renderSession = (s, i) => {
-        const start = new Date(s.start_time);
-        const hasEnd = !!s.end_time;
+        const date = new Date(s.start_time || s.date);
         const duration = s.duration_hours ?? s.duration ?? 0;
-
-        const end = hasEnd
-            ? new Date(s.end_time)
-            : new Date(start.getTime() + duration * 60 * 60 * 1000);
 
         return (
             <div key={i} className="session-entry">
-                <p><strong>{start.toLocaleString()} → {end.toLocaleString()}</strong></p>
+                <p><strong>{date.toLocaleDateString()}</strong></p>
                 <p>{s.description}</p>
                 <p>Hours: {duration.toFixed(2)}</p>
             </div>
@@ -131,7 +114,7 @@ function HoursTracker() {
     const ServiceHourEntry = ({ session }) => (
         <div className="session-entry">
             <div className="session-header">
-                <span className="session-date">{new Date(session.start_time).toLocaleDateString()}</span>
+                <span className="session-date">{new Date(session.start_time || session.date).toLocaleDateString()}</span>
                 {session.verified && (
                     <span className="verification-badge">
                         ✓ Approved
@@ -139,7 +122,7 @@ function HoursTracker() {
                 )}
             </div>
             <div className="session-details">
-                <p><strong>Duration:</strong> {session.duration} hours</p>
+                <p><strong>Duration:</strong> {session.duration_hours?.toFixed(2) || session.duration?.toFixed(2)} hours</p>
                 <p><strong>Description:</strong> {session.description}</p>
             </div>
         </div>
@@ -156,21 +139,11 @@ function HoursTracker() {
                     <option value="service">Service</option>
                 </select>
 
-                {form.type === 'service' ? (
-                    <>
-                        <label>Start Time</label>
-                        <input type="datetime-local" name="start_time" value={form.start_time} onChange={handleInputChange} required />
-                        <label>Duration</label>
-                        <input type="number" name="duration" value={form.duration} onChange={handleInputChange} placeholder="Duration (hours)" step="0.1" min="0" required />
-                    </>
-                ) : (
-                    <>
-                        <label>Start Time</label>
-                        <input type="datetime-local" name="start_time" value={form.start_time} onChange={handleInputChange} required />
-                        <label>End Time</label>
-                        <input type="datetime-local" name="end_time" value={form.end_time} onChange={handleInputChange} required />
-                    </>
-                )}
+                <label>Date</label>
+                <input type="date" name="date" value={form.date} onChange={handleInputChange} required />
+
+                <label>Duration (hours)</label>
+                <input type="number" name="duration" value={form.duration} onChange={handleInputChange} placeholder="Duration in hours" step="0.1" min="0" required />
 
                 <label>Description</label>
                 <textarea name="description" value={form.description} onChange={handleInputChange} required />
@@ -191,14 +164,7 @@ function HoursTracker() {
                 {studySessions.map(renderSession)}
 
                 <h3>Service Hours: {calculateTotal(serviceSessions)}</h3>
-                <div className="session-list">
-                    {serviceSessions.map(session => (
-                        <ServiceHourEntry 
-                            key={session.id} 
-                            session={session}
-                        />
-                    ))}
-                </div>
+                {serviceSessions.map((s, i) => <ServiceHourEntry key={i} session={s} />)}
             </div>
             
             <ServiceLeaderboard />
