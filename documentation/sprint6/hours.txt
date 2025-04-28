@@ -8,4 +8,7 @@ Aaditi Chinawalkar:
 Elizabeth Soltis:
   04/27 - 1.5 hours: adding dashboard functionality, fix some UI tweaks 
 
-Total Hours: 6 hours
+Sam Muehlebach:
+  04/27 - 2.5 hours fixing minor UI issues and testing all implemented functionality
+
+Total Hours: 8.5 hours
