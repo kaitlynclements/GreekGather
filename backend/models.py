@@ -330,6 +330,18 @@ class Photo(db.Model):
     uploader = db.relationship("User", backref="uploaded_photos")
 
 
+class File(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    uploader_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    chapter_id = db.Column(db.Integer, db.ForeignKey("chapter.id"), nullable=False)
+    filename = db.Column(db.String(300), nullable=False)
+    file_url = db.Column(db.String(300), nullable=False)
+    upload_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    uploader = db.relationship("User", backref="uploaded_files")
+
+
+
 class Announcement(db.Model):
     """
     Announcement model for chapter announcements.

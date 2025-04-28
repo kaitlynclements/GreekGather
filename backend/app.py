@@ -27,6 +27,7 @@ from routes.auth_routes import auth_routes
 from routes.event_routes import event_routes
 from routes.chapter_routes import chapter_routes
 from routes.photo_routes import photo_routes
+from routes.file_routes import file_routes
 from routes.announcements import announcements
 
 
@@ -56,6 +57,7 @@ app.register_blueprint(auth_routes, url_prefix="/auth")
 app.register_blueprint(event_routes)
 app.register_blueprint(chapter_routes)
 app.register_blueprint(photo_routes)
+app.register_blueprint(file_routes)
 app.register_blueprint(announcements)
 
 
