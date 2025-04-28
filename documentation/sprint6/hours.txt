@@ -11,4 +11,7 @@ Elizabeth Soltis:
 Sam Muehlebach:
   04/27 - 2.5 hours fixing minor UI issues and testing all implemented functionality
 
-Total Hours: 8.5 hours
+Taylor Slade
+  04/28 - 1 hour: backend routes for file uploads and final testing of functionality
+
+Total Hours: 9.5 hours
